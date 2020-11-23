@@ -8,6 +8,7 @@
 
 from PyQt4 import QtCore, QtGui
 import stats_page
+import os
 import result_viewer_page
 import create_database_file as cdf
 import create_database as cd 
@@ -25,7 +26,7 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-database = str(os.getcwd() + "/" + str("fingerprint_database.db")).replace("\\","/")
+database_file = str(os.getcwd() + "/" + str("fingerprint_database.db")).replace("\\","/")
 
 #create database file 
 cdf.create_connection(database_file)
