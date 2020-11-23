@@ -1,0 +1,11 @@
+audio_cropped
+audio_output
+cropped
+cropped_content
+cropped_threshold
+fingerprints
+jsons
+output
+audio_print_data.sqlite3
+fingerprint_database.db
+*.pyc
