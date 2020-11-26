@@ -122,7 +122,8 @@ class TaskThread(QThread):
         self.Stream = str(self.Stream)
         Stream = self.Stream
         Ad_seconds = self.Ad_seconds 
-        fingerprint = self.fingerprint  
+        fingerprint = self.fingerprint
+
 
 
         commercial_ad_time_seconds = self.Ad_seconds  
