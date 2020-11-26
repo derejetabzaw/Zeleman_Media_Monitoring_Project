@@ -19,6 +19,9 @@ from shutil import copy
 import sqed
 from os import path
 import time_converter
+import datetime 
+from ethiopian_date import EthiopianDateConverter
+
 if not os.path.exists("cropped_threshold"):
     os.makedirs("cropped_threshold")
 if not os.path.exists("cropped_content"):
@@ -41,7 +44,8 @@ default_path = os.path.dirname(os.path.abspath(__file__))
 
 database = str(os.getcwd() + "/" + str("fingerprint_database.db")).replace("\\","/")
 
-        
+conv = EthiopianDateConverter.to_ethiopian
+      
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
@@ -435,13 +439,24 @@ class Ui_MainWindow(object):
         Client = []
         Ad = []
         Ad_Duration = []
-        for i in range(self.audio_count + 1):
-            Client.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[i][0])
-            Ad.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[i][1])
-            Ad_Duration.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[i][2])
+        Date = datetime.date.today()
+        Date_of_broadcast = [Date.month,Date.day,Date.year]
+        
+        Eth_date = str(conv(Date_of_broadcast[2],Date_of_broadcast[0],Date_of_broadcast[1]))[1:-1]        
+        Eth_date = Eth_date.replace('/',',')
+        Eth_date = [int(i) for i in Eth_date.split(',')]
+        Eth_date = str(Eth_date[1]) + str(',') + str(Eth_date[2]) + str(',') + str(Eth_date[0])
         audio_search_page_ui = audio_search_page.Ui_MainWindow()
-        audio_search_page_ui.setupUi(MainWindow,str(database),str(Commercial),str(Stream), str(Client), str(Ad) , str(Ad_Duration))
+        for i in range(self.audio_count + 1):
+            Client.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][0])
+            Ad.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][1])
+            Ad_Duration.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][2])
+        audio_search_page_ui.setupUi(MainWindow,Date_of_broadcast,Eth_date,str(database),Commercial,str(Stream), Client, Ad , str(Ad_Duration))
         MainWindow.show()
+        import sys
+        sys.exit(app.exec_())
+
+        exit()
     def audio_clear_commercials_2(self,count):
         self.audio_Commercial_3.hide()
         self.audio_Commercial_Text_Edit_3.hide()
