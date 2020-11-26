@@ -346,8 +346,7 @@ def dict_factory(cursor, row):
     return d
     
 def setup_db(db_path, dict_factory = dict_factory):
-    conn = sqlite3.connect(db_path)
-    print ("db_path: " + db_path)
+    conn = sqlite3.connect(db_path,check_same_thread=False)
     conn.row_factory = dict_factory
     return conn
 
