@@ -20,9 +20,7 @@ import audio_result_viewer_page
 sys.path.insert(1, os.path.join(os.getcwd(),'matching'))
 import sqed_dir as sqd
 from shutil import copy
-
-from dejavu import Dejavu
-from dejavu.recognize import FileRecognizer
+import audio_comparison as ac
 import json
 import create_fingerprint_database 
 import datetime 
@@ -44,16 +42,15 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
 if not os.path.exists("audio_cropped"):
     os.makedirs("audio_cropped")
-#database = r"C:/Users/dereje/Desktop/Media_Monitoring_Project/Frontend/frontend_codes/fingerprint_database.db"
-#create_fingerprint_database.create_database_and_tables(database)
 conv = EthiopianDateConverter.to_ethiopian
 
-with open("dejavu.cnf.SQLITE_SAMPLE") as f:
-    config = json.load(f)
-djv = Dejavu(config)
+
+
+
+confidence_tune = 150
 
 class Ui_MainWindow(object):
-    def setupUi(self,MainWindow,database,Commercial,Stream, Client, Ad, Ad_Duration):
+    def setupUi(self,MainWindow,Date_of_broadcast,Eth_date,database,Commercial,Stream, Client, Ad, Ad_Duration):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(795, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -87,39 +84,18 @@ class Ui_MainWindow(object):
 
        
         self.progressBar.setRange(0,100)
-
-        self.myLongTask = TaskThread(Stream= Stream , Ad_Duration= Ad_Duration)
-        self.myLongTask.start()
-        
-        self.myLongTask.valueChanged.connect(self.progressBar.setValue)
-        self.myLongTask.taskFinished.connect(self.progressBar.setValue)
-        self.myLongTask.taskFinished.connect(self.pushButton.setEnabled)
+        self.audio_scan_progress_bar = Audio_TaskThread(Stream= Stream ,Ad = Ad, Ad_Duration= Ad_Duration, database = database, Date_of_broadcast = Date_of_broadcast,Eth_date = Eth_date ,Client = Client,Commercial = Commercial)
+        self.audio_scan_progress_bar.start()
+        self.audio_scan_progress_bar.audio_valueChanged.connect(self.progressBar.setValue)
+        self.audio_scan_progress_bar.audio_taskFinished.connect(self.progressBar.setValue)
+        self.audio_scan_progress_bar.audio_taskFinished.connect(self.pushButton.setEnabled)
 
         
-        cropped_audio = self.myLongTask.run()[0]
-        Stream_duration = str(self.myLongTask.run()[1])
-        
+        #cropped_audio = self.audio_scan_progress_bar.run()[0]
+        #Stream_duration = str(self.audio_scan_progress_bar.run()[1])
 
-        songs  = []
-        Date = datetime.date.today()
-        Date_of_broadcast = [Date.month,Date.day,Date.year]
         
-        Eth_date = str(conv(Date_of_broadcast[2],Date_of_broadcast[0],Date_of_broadcast[1]))[1:-1]        
-        Eth_date = Eth_date.replace('/',',')
-        Eth_date = [int(i) for i in Eth_date.split(',')]
-        Eth_date = str(Eth_date[1]) + str(',') + str(Eth_date[2]) + str(',') + str(Eth_date[0])
-        
-        for i in range(len(cropped_audio)):
-            songs.append(djv.recognize(FileRecognizer,cropped_audio[i]))
-           
-            if songs[i]['confidence'] > 100:
-                broadcast_information = str("Yes")
-                match_time = songs[i]['match_time']
-                create_fingerprint_database.insert_audio_broadcast_information_to_database(database,str(Date_of_broadcast),str(Eth_date),str(Client[i]),str(Commercial[i]),broadcast_information,str(Ad[i]),str(Ad_Duration[i]),Stream,Stream_duration,match_time)
-            else:
-                print "No Audio Found Matching" 
-        
-        self.myLongTask.connect(self.myLongTask, QtCore.SIGNAL('labeltext(QString)'), self.label.setText)
+        self.audio_scan_progress_bar.connect(self.audio_scan_progress_bar, QtCore.SIGNAL('labeltext(QString)'), self.label.setText)
         self.pushButton.clicked.connect(lambda x: self.next_button(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream))
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -136,65 +112,118 @@ class Ui_MainWindow(object):
         result_viewer_page_ui.setupUi(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream,broadcast_information,Ad_dur,Time_in_video)
         MainWindow.show()
 
-class TaskThread(QThread):
-    taskFinished = QtCore.pyqtSignal(int,bool)
-    valueChanged = QtCore.pyqtSignal(int) 
-    cropped_audio_list = QtCore.pyqtSignal(object)
-    indexed_audio = []
+class Audio_TaskThread(QThread):
+    audio_taskFinished = QtCore.pyqtSignal(int,bool)
+    audio_valueChanged = QtCore.pyqtSignal(int) 
 
-    def __init__(self,Stream, Ad_Duration):
+    def __init__(self,Stream,Ad,Ad_Duration,database,Date_of_broadcast,Eth_date,Client,Commercial):
         super(QThread, self).__init__()
         self.Stream = Stream
+        self.Ad = Ad
         self.Ad_Duration = Ad_Duration
-        print self.Stream
-
+        self.database = database
+        self.Date_of_broadcast = Date_of_broadcast
+        self.Eth_date = Eth_date
+        self.Client = Client
+        self.Commercial = Commercial
+                
     def run(self):
-        self.Stream = str(self.Stream)
+        Stream = self.Stream
         Ad_Duration = self.Ad_Duration
-
+        Ad = str(self.Ad)
+        database = str(self.database)
+        Date_of_broadcast = str(self.Date_of_broadcast)
+        Eth_date = str(self.Eth_date)
+        Client = str(self.Client)
+        Commercial = str(self.Commercial)
         
-        sleep(1)
+        #sleep(1)
+
         '''Getting Duration'''
-
-
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Getting Duration..."))
-        Ad_Duration = 121
-        St_dur = int(get_sec(getLength(self.Stream)))
+        
+        Ad_Duration = 30
+        St_dur = int(get_sec(getLength(Stream)))
         for i in xrange(15,2):
-            self.valueChanged.emit(i) 
+            self.audio_valueChanged.emit(i) 
             sleep(0.5)
+
         
         
         '''Indexing'''    
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Indexing..."))
-        segment_index = int(round(St_dur / Ad_Duration))
+        segment_index = int(round(St_dur / Ad_Duration)) + 1
+        print segment_index
         for i in range(15,26,2):
-            self.valueChanged.emit(i)
+            self.audio_valueChanged.emit(i)
             sleep(0.5)
         
 
         '''Trimming'''
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Trimming..."))
-
         indexed_audio = []
         for i in range(segment_index):
             crop(str(i*Ad_Duration),str(Ad_Duration*(i + 1)),str(self.Stream),str("audio_cropped/audio_crop_" + str(i) + ".mp3"))
             indexed_audio.append(os.getcwd() + "/audio_cropped/audio_crop_" + str(i) + ".mp3")
-        self.cropped_audio_list.emit(indexed_audio)
 
         for i in range(26,41,2):
-            self.valueChanged.emit(i)
+            self.audio_valueChanged.emit(i)
             sleep(0.5) 
-        
 
-        '''Centroid of Gradient Orientation'''
-        self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Fingerprinting..."))
+        self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Finding Match..."))
+
+        Stream_duration = St_dur
+        songs = ac.audio_compare(indexed_audio)
+        match_time = []
+        for i in range(len(indexed_audio)):
+            if songs[i]['confidence'] > confidence_tune and songs[i]['song_name'] == str(os.path.splitext(os.path.basename(Ad))[0]):
+                print (songs[i]['confidence'])
+                broadcast_information = str("Yes")
+                match_time.append(float(songs[i]['match_time']) + float(songs[i]['offset_seconds']))
+                print match_time
+                print str(indexed_audio[i]) + " has an Audio Match: " + str(songs[i]['song_name']) + " ,with a confidence of: " + str(songs[i]['confidence']) + " at matchtime: " + str(match_time)
+                #create_fingerprint_database.insert_audio_broadcast_information_to_database(database,str(Date_of_broadcast),str(Eth_date),str(Client),str(Commercial),broadcast_information,str(Ad),str(Ad_Duration),Stream,Stream_duration,match_time)
+                #break
+            else:
+                print " Didn't Match "
+                broadcast_information = str("No")
+
+        '''Writing to Database'''
+        self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Recording to Database"))
+        for i in range(2):
+            create_fingerprint_database.insert_audio_broadcast_information_to_database(database,str(Date_of_broadcast),str(Eth_date),str(Client[i]),str(Commercial[i]),broadcast_information,str(Ad[i]),str(Ad_Duration),Stream,Stream_duration,str(match_time[i]))
+            exit()
 
         for i in range(41,98,4):
-            self.valueChanged.emit(i)
+            self.audio_valueChanged.emit(i)
             sleep(0.5)
+
+        for audio_file in os.listdir("audio_cropped"):
+            if audio_file.lower().endswith((".mp3",".wma",".wav")):
+                os.remove(os.getcwd() + "/audio_cropped/" + audio_file)  
+
 
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Done"))
 
-        self.taskFinished.emit(100,True)  
-        return indexed_audio, St_dur
+        self.audio_taskFinished.emit(100,True)  
+        
+
+# if __name__ == '__main__':
+#     import sys
+#     Date_of_broadcast = ['11,12,2005','12,5,2006']
+#     Eth_date = ['12,1,1996','15,5,1998']
+#     database = 'finger.db'
+#     app = QtGui.QApplication(sys.argv)
+#     MainWindow = QtGui.QMainWindow()
+#     ui = Ui_MainWindow()
+#     #ui.setupUi(MainWindow)
+    
+#     Commercial = "Coca Cola"
+#     Stream = "C:/Users/dereje/Desktop/Media_Monitoring_Project/dejavu/stream_audio/stream.mp3"
+#     Client = "Zeleman"
+#     Ad = "C:/Users/dereje/Desktop/Media_Monitoring_Project/Zele_Ads/Zeleman_Coca-Cola.mp3"
+#     Ad_Duration = "30" 
+#     ui.setupUi(MainWindow,Date_of_broadcast,Eth_date,database,Commercial,Stream,Client, Ad, Ad_Duration)
+#     MainWindow.show()
+#     sys.exit(app.exec_())
+#     
