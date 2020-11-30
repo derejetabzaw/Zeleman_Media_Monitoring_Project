@@ -8,12 +8,12 @@ import json
 from glob import glob
 
 vector = namedtuple("vector", "x y")
-#print (vector)
+# print (vector)
 vector.length = lambda self: sqrt(self.x**2 + self.y**2)
-#print (vector.length)
+# print (vector.length)
 RA = namedtuple("RA","r a")
 vector2ra = lambda v: RA(v.length(), atan2(v.y, v.x)) #4&5
-#print (vector2ra)
+# print (vector2ra)
 def G(data, x, y):
     return vector( data[x+1,y]-data[x-1,y], data[x,y+1]-data[x,y-1] ) #2&3
 
@@ -40,9 +40,7 @@ def main():
                     ras.append( ra )
         
             c = sum(map(lambda x: x.r*x.a, ras)) / sum(map(lambda x: x.r, ras)) #6
-            #print (c)
             result.append( c )
         print json.dumps(result)
-    
 if __name__ == "__main__":
     main()

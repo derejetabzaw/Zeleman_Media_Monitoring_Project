@@ -17,14 +17,11 @@ TILES_DIR = File.expand_path("tiles/")
 
 # Create directories if they don't exist
 mkdir SEARCH_DIR if ! File.directory?(SEARCH_DIR)
-puts SEARCH_DIR
 mkdir TMP_DIR if ! File.directory?(TMP_DIR)
-puts TMP_DIR
 mkdir TILES_DIR if ! File.directory?(TILES_DIR)
 
 # Helper to run command silently and raise exception if didn't run correctly
 def quietrun(cmd)
-    #print cmd.join(" ")
     process = ChildProcess.build(*cmd)
     process.start
     begin
@@ -59,7 +56,7 @@ Dir.chdir(TMP_DIR) do
     scores = []
     print "|| ImageMagick tiles "
     Find.find(TMP_DIR) do |frame|
-      quietrun(['convert', '-colorspace', 'gray', '-crop', '80x120', frame, '../tiles/tile%03d.png'])
+      quietrun(['C:/Program Files/ImageMagick-7.0.9-Q16/convert.exe', '-colorspace', 'gray', '-crop', '80x120', frame, '../tiles/tile%03d.png'])
 
       out = `python ../centroid/centroid.py '#{TILES_DIR}/tile*.png'`
       scores.push(JSON.parse(out.strip))
@@ -68,11 +65,10 @@ Dir.chdir(TMP_DIR) do
     File.open(filename+".json", 'w+') { |file| file.write(scores.to_json) }
 
 
-    FileUtils.rm_rf(Dir.glob('tmp/*'))
-    FileUtils.rm_rf(Dir.glob('tiles/*'))
 
-    # Delete the images created by mogrify and mplayer
-    #del %x(Dir *.jpg).split("\n"))
+    FileUtils.rm_rf("#{TMP_DIR}/.", secure: true)
+    FileUtils.rm_rf("#{TILES_DIR}/.", secure: true)
+    
 
   end
 end

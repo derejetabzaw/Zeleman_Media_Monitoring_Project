@@ -22,6 +22,9 @@ from dejavu.recognize import FileRecognizer, MicrophoneRecognizer
 import json
 import glob
 from os import path
+import fingerprint_video_progress as fvp
+import fingerprint_audio_progress as fap
+
 
 if not os.path.exists("fingerprints"):
     os.makedirs("fingerprints")
@@ -174,10 +177,7 @@ class Ui_MainWindow(object):
         self.Commercial_Text_Edit.setText(str(Commercial))
         self.Ad_Text_Edit.setText(str(Ad))
         
-        # self.Client_Text_Edit.text()
-        # self.Commercial.text()
-        # self.Ad_Text_Edit.text()
-
+        
         Client_2 = ""
         Commercial_2 = ""
         Ad_2 = ""
@@ -215,7 +215,7 @@ class Ui_MainWindow(object):
 
 
 
-        self.fingerprint.clicked.connect(lambda x: self.fingerprint_button(
+        self.fingerprint.clicked.connect(lambda x: self.fingerprint_button(MainWindow,
             [str(self.Client_Text_Edit.text()),str(self.Client_Text_Edit_2.text()),str(self.Client_Text_Edit_3.text()),str(self.Client_Text_Edit_4.text())],
             [str(self.Commercial_Text_Edit.text()),str(self.Commercial_Text_Edit_2.text()),str(self.Commercial_Text_Edit_3.text()),str(self.Commercial_Text_Edit_4.text())],
             [str(self.Ad_Text_Edit.text()),str(self.Ad_Text_Edit_2.text()),str(self.Ad_Text_Edit_3.text()),str(self.Ad_Text_Edit_4.text())]))
@@ -349,9 +349,7 @@ class Ui_MainWindow(object):
         self.audio_Commercial_Text_Edit.setText(str(Commercial))
         self.audio_Ad_Text_Edit.setText(str(Ad))
         
-        # self.Client_Text_Edit.text()
-        # self.Commercial.text()
-        # self.Ad_Text_Edit.text()
+
 
         audio_Client_2 = ""
         audio_Commercial_2 = ""
@@ -400,7 +398,7 @@ class Ui_MainWindow(object):
 
 
 
-        self.audio_fingerprint.clicked.connect(lambda x: self.audio_fingerprint_button(
+        self.audio_fingerprint.clicked.connect(lambda x: self.audio_fingerprint_button(MainWindow,
             [str(self.audio_Client_Text_Edit.text()),str(self.audio_Client_Text_Edit_2.text()),str(self.audio_Client_Text_Edit_3.text()),str(self.audio_Client_Text_Edit_4.text())],
             [str(self.audio_Commercial_Text_Edit.text()),str(self.audio_Commercial_Text_Edit_2.text()),str(self.audio_Commercial_Text_Edit_3.text()),str(self.audio_Commercial_Text_Edit_4.text())],
             [str(self.audio_Ad_Text_Edit.text()),str(self.audio_Ad_Text_Edit_2.text()),str(self.audio_Ad_Text_Edit_3.text()),str(self.audio_Ad_Text_Edit_4.text())]))
@@ -528,47 +526,12 @@ class Ui_MainWindow(object):
         self.remove_2.setDisabled(False)
         self.count = 2
 
-    def fingerprint_button(self,Client,Commercial,Ad):
-        original_json = []
-        renamed_json = []
-        json_filename = []
-        fingerprint_script = "ruby dupe.rb"
-        fingerprint_array = []
-        json_files = []
-        files = glob.glob(os.getcwd() + "/fingerprints/" + str('*'))
-        for i in range(self.count + 1):
-            
-            if path.exists(os.getcwd() + "/jsons/" + str(Commercial[i] + ".json")):
-                print (str(Commercial[i] + ".json") + str(" Fingerprint Already Exists, Do you want to overwrite?"))
-                break
-            
-            else:
-                #fingerprint_script.append("ruby dupe.rb " + str(Commercial[i]))
-                #fingerprint_script
-                copy(str(Ad[i]),"fingerprints")        
-                print(str("Fingerprinting: ") + str(Ad[i])) + str(" Video_") + str(i)
-            
-                os.system(fingerprint_script)
-                
-                for video_file in os.listdir("fingerprints"):
-                    if video_file.lower().endswith((".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
-                        os.remove(os.getcwd() + "/fingerprints/" + video_file)        
-
-  
-                for file in os.listdir("fingerprints"):
-                    if file.endswith(".json"):
-                        json_files.append(file)
-            
-                original_json.append((os.getcwd() + "/fingerprints/" + str(json_files[i])).replace("\\","/"))
-                renamed_json.append(os.getcwd() + "/jsons/" + str(Commercial[i] + ".json"))
-                os.rename(original_json[i],renamed_json[i])
-                fingerprint_array.append(load_tester(renamed_json[i]))
-                Ad_Duration = getLength(Ad[i])
-                create_fingerprint_database.insert_video_information_to_database(database,str(Client[i]),str(Commercial[i]),str(Ad[i]),str(Ad_Duration),str(fingerprint_array[i]),str(renamed_json[i]))
-        for f in files:
-            os.remove(f)
-        exit()
-
+    def fingerprint_button(self,MainWindow,Client,Commercial,Ad):
+        Commercial_Length = (self.count + 1)
+        fingerprint_progress_ui = fvp.Ui_MainWindow()
+        fingerprint_progress_ui.setupUi(MainWindow,database,Client,Commercial,Commercial_Length,Ad)
+        MainWindow.show()
+        
 
 
 
@@ -703,27 +666,21 @@ class Ui_MainWindow(object):
         self.audio_remove_2.setDisabled(False)
         self.audio_count = 2
 
-    def audio_fingerprint_button(self,Client,Commercial,Ad):
-        for i in range(self.audio_count + 1):            
-            if not os.path.exists("audio_output"):
-              os.makedirs("audio_output")
-            copy(str(Ad[i]),"audio_output")
-            Ad_Duration = getLength(Ad[i])
-            create_fingerprint_database.insert_audio_information_to_database(database,str(Client[i]),str(Commercial[i]),str(Ad[i]),str(Ad_Duration))
-        djv.fingerprint_directory(os.getcwd() + "/audio_output/", [".mp3"])
-        for audio_file in os.listdir("audio_output"):
-            if audio_file.lower().endswith((".mp3",".wma",".wav")):
-                os.remove(os.getcwd() + "/audio_output/" + audio_file)  
-        exit()
+    def audio_fingerprint_button(self,MainWindow,Client,Commercial,Ad):
+        Commercial_Length = (self.audio_count + 1)
+        audio_fingerprint_progress_ui = fap.Ui_MainWindow()
+        audio_fingerprint_progress_ui.setupUi(MainWindow,database,Client,Commercial,Commercial_Length,Ad)
+        MainWindow.show()
+        
     def back_button(self,MainWindow):
         main_menu_ui = main_menu.Ui_MainWindow()
         main_menu_ui.setupUi(MainWindow)
         MainWindow.show()
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtGui.QApplication(sys.argv)
+#     MainWindow = QtGui.QMainWindow()
+#     ui = Ui_MainWindow()
+#     ui.setupUi(MainWindow)
+#     MainWindow.show()
+#     sys.exit(app.exec_())

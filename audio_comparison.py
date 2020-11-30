@@ -14,3 +14,5 @@ def audio_compare(indexed_audio):
 		print audio_file
 		songs.append(djv.recognize(FileRecognizer,audio_file))
 	return songs
+def audio_fingerprint(directory):
+	djv.fingerprint_directory(str(directory) + "/audio_output/", [".mp3"])
