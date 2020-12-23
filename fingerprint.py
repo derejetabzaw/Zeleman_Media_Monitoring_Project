@@ -81,7 +81,7 @@ class Ui_MainWindow(object):
         
         self.Client_label = QtGui.QLabel(self.Video)
         self.Client_label.setGeometry(QtCore.QRect(10, 50, 100, 20))
-        self.Client_label.setText("Client")
+        self.Client_label.setText("Agent")
 
         self.Commercial = QtGui.QLabel(self.Video)
         self.Commercial.setGeometry(QtCore.QRect(10, 80, 100, 20))
@@ -90,16 +90,54 @@ class Ui_MainWindow(object):
         self.Ad_label = QtGui.QLabel(self.Video)
         self.Ad_label.setGeometry(QtCore.QRect(10, 110, 100, 20))
         self.Ad_label.setText("TV Ad")
+
+        self.TV_Stations = QtGui.QLabel(self.Video)
+        self.TV_Stations.setGeometry(QtCore.QRect(10, 20, 100, 20))
+        self.TV_Stations.setText("TV Station")
         
         
         self.Client_Text_Edit = QtGui.QLineEdit(self.Video)
         self.Client_Text_Edit.setGeometry(QtCore.QRect(80,50,150,20))
+
+        self.Agent_Choice = QtGui.QComboBox(self.Video)
+        self.Agent_Choice.setGeometry(QtCore.QRect(80,50,150,20))
+        
         
         self.Commercial_Text_Edit = QtGui.QLineEdit(self.Video)
         self.Commercial_Text_Edit.setGeometry(QtCore.QRect(80,80,150,20))
+
+        self.Commercial_Choice = QtGui.QComboBox(self.Video)
+        self.Commercial_Choice.setGeometry(QtCore.QRect(80,80,150,20))
         
         self.Ad_Text_Edit = QtGui.QLineEdit(self.Video)
         self.Ad_Text_Edit.setGeometry(QtCore.QRect(80,110,500,20))
+
+        self.Tv_Station_Choice = QtGui.QComboBox(self.Video)
+        self.Tv_Station_Choice.setGeometry(QtCore.QRect(80,20,150,20))
+        
+
+        self.Tv_Station_Add_Choice = QtGui.QPushButton(self.Video)
+        self.Tv_Station_Add_Choice.setGeometry(QtCore.QRect(240,17,75,25))
+        self.Tv_Station_Add_Choice.setText("Add")
+        self.Tv_Station_Add_Choice.clicked.connect(lambda x: self.add_tv_station(MainWindow))
+        
+        self.Agent_Add_Choice = QtGui.QPushButton(self.Video)
+        self.Agent_Add_Choice.setGeometry(QtCore.QRect(240,47,75,25))
+        self.Agent_Add_Choice.setText("Add")
+        self.Agent_Add_Choice.clicked.connect(lambda x: self.add_new_agent(MainWindow))
+        
+        self.Commercial_Add_Choice = QtGui.QPushButton(self.Video)
+        self.Commercial_Add_Choice.setGeometry(QtCore.QRect(240,77,75,25))
+        self.Commercial_Add_Choice.setText("Add")
+        self.Commercial_Add_Choice.clicked.connect(lambda x: self.add_new_commercial(MainWindow))
+        
+        
+        
+        self.Agent_Choice.currentIndexChanged.connect(self.selectionchanged)
+        self.Agent_Choice.addItems(["Zeleman", "Cactus", "Spotlight","Berry","251"])
+
+        self.Tv_Station_Choice.addItems(["EBC","EBS","FANA","ARTS","WALTA"])
+
 
         self.browse = QtGui.QPushButton(self.Video)
         self.browse.setGeometry(QtCore.QRect(600,105,75,25))
@@ -117,16 +155,39 @@ class Ui_MainWindow(object):
         self.fingerprint.setText("Fingerprint")
         
         self.browse.clicked.connect(self.browse_ad_additional_button_click)
-        self.add_ad.clicked.connect(self.more_ad_add)
+        self.add_ad.clicked.connect(lambda x: self.more_ad_add(MainWindow))
         self.count = 0 
 
         self.Client_label_2 = QtGui.QLabel(self.Video)
         self.Commercial_2 = QtGui.QLabel(self.Video)
+
+
+
+        
+        
         self.Ad_label_2 = QtGui.QLabel(self.Video)
+        
         self.Client_Text_Edit_2 = QtGui.QLineEdit(self.Video)
         self.Client_Text_Edit_2.hide()
+       
+        self.Agent_Choice_2 = QtGui.QComboBox(self.Video)
+        self.Agent_Choice_2.hide()
+        self.Agent_Choice_3 = QtGui.QComboBox(self.Video)
+        self.Agent_Choice_3.hide()
+        self.Agent_Choice_4 = QtGui.QComboBox(self.Video)
+        self.Agent_Choice_4.hide()
+
+
         self.Commercial_Text_Edit_2 = QtGui.QLineEdit(self.Video)
         self.Commercial_Text_Edit_2.hide()
+        self.Commercial_Choice_2 = QtGui.QComboBox(self.Video)
+        self.Commercial_Choice_2.hide()
+        self.Commercial_Choice_3 = QtGui.QComboBox(self.Video)
+        self.Commercial_Choice_3.hide()
+        self.Commercial_Choice_4 = QtGui.QComboBox(self.Video)
+        self.Commercial_Choice_4.hide()
+
+        
         self.Ad_Text_Edit_2 = QtGui.QLineEdit(self.Video)
         self.Ad_Text_Edit_2.hide()
         self.browse_2 = QtGui.QPushButton(self.Video)
@@ -139,6 +200,7 @@ class Ui_MainWindow(object):
         self.Ad_label_3 = QtGui.QLabel(self.Video)
         self.Client_Text_Edit_3 = QtGui.QLineEdit(self.Video)
         self.Commercial_Text_Edit_3 = QtGui.QLineEdit(self.Video)
+        
         self.Ad_Text_Edit_3 = QtGui.QLineEdit(self.Video)
         self.browse_3 = QtGui.QPushButton(self.Video)
         self.browse_3.clicked.connect(self.browse_ad_additional_button_click_3)
@@ -153,6 +215,7 @@ class Ui_MainWindow(object):
 
         self.Client_label_4 = QtGui.QLabel(self.Video)
         self.Commercial_4 = QtGui.QLabel(self.Video)
+
         self.Ad_label_4 = QtGui.QLabel(self.Video)
         self.Client_Text_Edit_4 = QtGui.QLineEdit(self.Video)
         self.Commercial_Text_Edit_4 = QtGui.QLineEdit(self.Video)
@@ -251,7 +314,7 @@ class Ui_MainWindow(object):
 
         self.audio_Client_label = QtGui.QLabel(self.Audio)
         self.audio_Client_label.setGeometry(QtCore.QRect(10, 50, 100, 20))
-        self.audio_Client_label.setText("Client")
+        self.audio_Client_label.setText("Agent")
 
         self.audio_Commercial = QtGui.QLabel(self.Audio)
         self.audio_Commercial.setGeometry(QtCore.QRect(10, 80, 100, 20))
@@ -260,6 +323,11 @@ class Ui_MainWindow(object):
         self.audio_Ad_label = QtGui.QLabel(self.Audio)
         self.audio_Ad_label.setGeometry(QtCore.QRect(10, 110, 100, 20))
         self.audio_Ad_label.setText("Radio Ad")
+
+        
+        self.Radio_Stations = QtGui.QLabel(self.Audio)
+        self.Radio_Stations.setGeometry(QtCore.QRect(10, 140, 100, 20))
+        self.Radio_Stations.setText("Radio Station")
         
         
         self.audio_Client_Text_Edit = QtGui.QLineEdit(self.Audio)
@@ -270,6 +338,19 @@ class Ui_MainWindow(object):
         
         self.audio_Ad_Text_Edit = QtGui.QLineEdit(self.Audio)
         self.audio_Ad_Text_Edit.setGeometry(QtCore.QRect(80,110,500,20))
+
+        self.Radio_Station_Choice = QtGui.QComboBox(self.Audio)
+        self.Radio_Station_Choice.setGeometry(QtCore.QRect(80,140,150,20))
+        
+
+        self.Radio_Station_Add_Choice = QtGui.QPushButton(self.Audio)
+        self.Radio_Station_Add_Choice.setGeometry(QtCore.QRect(240,137,75,25))
+        self.Radio_Station_Add_Choice.setText("Add")
+        self.Radio_Station_Add_Choice.clicked.connect(lambda x: self.add_radio_station(MainWindow))
+
+
+
+        self.Radio_Station_Choice.addItems(["FMADDIS", "SHEGERFM", "AHADU","AFROFM"])
 
 
 
@@ -406,6 +487,229 @@ class Ui_MainWindow(object):
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Audio), _translate("MainWindow", "Audio", None))
 
+    def selectionchanged(self):
+        if (self.Agent_Choice.currentIndex() == 0):
+            self.Commercial_Choice.clear()
+
+            self.Commercial_Choice.addItems(["Coca Cola", "Scotts", "Anbessa Beer","Diageo"])
+
+        if (self.Agent_Choice.currentIndex() == 1):
+            self.Commercial_Choice.clear()
+            self.Commercial_Choice.addItems(["Ambo Flavour", "Aqua Addis"])
+        if (self.Agent_Choice.currentIndex() == 2):
+            self.Commercial_Choice.clear()
+            self.Commercial_Choice.addItems(["Sun Chips", "Abyssinia Water"])
+        if (self.Agent_Choice.currentIndex() == 3):
+            self.Commercial_Choice.clear()
+            self.Commercial_Choice.addItems(["Senq"])
+    
+    def selectionchanged_2(self):
+        if (self.Agent_Choice_2.currentIndex() == 4):
+            self.Commercial_Choice_2.clear()
+
+            self.Commercial_Choice_2.addItems(["Coca Cola", "Scotts", "Anbessa Beer","Diageo"])
+
+        if (self.Agent_Choice_2.currentIndex() == 0):
+            self.Commercial_Choice_2.clear()
+            self.Commercial_Choice_2.addItems(["Ambo Flavour", "Aqua Addis"])
+        if (self.Agent_Choice_2.currentIndex() == 1):
+            self.Commercial_Choice_2.clear()
+            self.Commercial_Choice_2.addItems(["Sun Chips", "Abyssinia Water"])
+        if (self.Agent_Choice_2.currentIndex() == 2):
+            self.Commercial_Choice_2.clear()
+            self.Commercial_Choice_2.addItems(["Senq"])
+    
+    def selectionchanged_3(self):
+        if (self.Agent_Choice_3.currentIndex() == 3):
+            self.Commercial_Choice_3.clear()
+
+            self.Commercial_Choice_3.addItems(["Coca Cola", "Scotts", "Anbessa Beer","Diageo"])
+
+        if (self.Agent_Choice_3.currentIndex() == 4):
+            self.Commercial_Choice_3.clear()
+            self.Commercial_Choice_3.addItems(["Ambo Flavour", "Aqua Addis"])
+        if (self.Agent_Choice_3.currentIndex() == 0):
+            self.Commercial_Choice_3.clear()
+            self.Commercial_Choice_3.addItems(["Sun Chips", "Abyssinia Water"])
+        if (self.Agent_Choice_3.currentIndex() == 1):
+            self.Commercial_Choice_3.clear()
+            self.Commercial_Choice_3.addItems(["Senq"])
+    
+    def selectionchanged_4(self):
+        if (self.Agent_Choice_4.currentIndex() == 2):
+            self.Commercial_Choice_4.clear()
+
+            self.Commercial_Choice_4.addItems(["Coca Cola", "Scotts", "Anbessa Beer","Diageo"])
+
+        if (self.Agent_Choice_4.currentIndex() == 3):
+            self.Commercial_Choice_4.clear()
+            self.Commercial_Choice_4.addItems(["Ambo Flavour", "Aqua Addis"])
+        if (self.Agent_Choice_4.currentIndex() == 4):
+            self.Commercial_Choice_4.clear()
+            self.Commercial_Choice_4.addItems(["Sun Chips", "Abyssinia Water"])
+        if (self.Agent_Choice_4.currentIndex() == 0):
+            self.Commercial_Choice_4.clear()
+            self.Commercial_Choice_4.addItems(["Senq"])
+    
+    '''Add New Agent'''    
+    def add_new_agent(self,MainWindow):
+        self.dialog_for_new_agent= QtGui.QDialog(self.Video)
+        self.add_option = QtGui.QPushButton("Add",self.dialog_for_new_agent)
+        self.new_agent_Text_Edit = QtGui.QLineEdit(self.dialog_for_new_agent)
+        self.new_agent_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option.move(85,80)
+        self.dialog_for_new_agent.setWindowTitle("Add Agent")
+        self.add_option.clicked.connect(lambda x: self.add_options_to_agent_index(MainWindow,str(self.new_agent_Text_Edit.text())))
+        self.dialog_for_new_agent.exec_()
+    def add_options_to_agent_index(self,MainWindow,new_agent):
+        self.Agent_Choice.addItem(new_agent)
+        count = self.Agent_Choice.count()
+        self.Agent_Choice.setCurrentIndex(count - 1)
+        self.dialog_for_new_agent.close()
+    
+    def add_new_agent_2(self,MainWindow):
+        self.dialog_for_new_agent_2= QtGui.QDialog(self.Video)
+        self.add_option_2 = QtGui.QPushButton("Add",self.dialog_for_new_agent_2)
+        self.new_agent_Text_Edit_2 = QtGui.QLineEdit(self.dialog_for_new_agent_2)
+        self.new_agent_Text_Edit_2.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option_2.move(85,80)
+        self.dialog_for_new_agent_2.setWindowTitle("Add Agent")
+        self.add_option_2.clicked.connect(lambda x: self.add_options_to_agent_index_2(MainWindow,str(self.new_agent_Text_Edit_2.text())))
+        self.dialog_for_new_agent_2.exec_()
+    def add_options_to_agent_index_2(self,MainWindow,new_agent):
+        self.Agent_Choice_2.addItem(new_agent)
+        count = self.Agent_Choice_2.count()
+        self.Agent_Choice_2.setCurrentIndex(count - 1)
+        self.dialog_for_new_agent_2.close()
+    def add_new_agent_3(self,MainWindow):
+        self.dialog_for_new_agent_3= QtGui.QDialog(self.Video)
+        self.add_option_3 = QtGui.QPushButton("Add",self.dialog_for_new_agent_3)
+        self.new_agent_Text_Edit_3 = QtGui.QLineEdit(self.dialog_for_new_agent_3)
+        self.new_agent_Text_Edit_3.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option_3.move(85,80)
+        self.dialog_for_new_agent_3.setWindowTitle("Add Agent")
+        self.add_option_3.clicked.connect(lambda x: self.add_options_to_agent_index_3(MainWindow,str(self.new_agent_Text_Edit_3.text())))
+        self.dialog_for_new_agent_3.exec_()
+    def add_options_to_agent_index_3(self,MainWindow,new_agent):
+        self.Agent_Choice_3.addItem(new_agent)
+        count = self.Agent_Choice_3.count()
+        self.Agent_Choice_3.setCurrentIndex(count - 1)
+        self.dialog_for_new_agent_3.close()
+    def add_new_agent_4(self,MainWindow):
+        self.dialog_for_new_agent_4= QtGui.QDialog(self.Video)
+        self.add_option_4 = QtGui.QPushButton("Add",self.dialog_for_new_agent_4)
+        self.new_agent_Text_Edit_4 = QtGui.QLineEdit(self.dialog_for_new_agent_4)
+        self.new_agent_Text_Edit_4.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option_4.move(85,80)
+        self.dialog_for_new_agent_4.setWindowTitle("Add Agent")
+        self.add_option_4.clicked.connect(lambda x: self.add_options_to_agent_index_4(MainWindow,str(self.new_agent_Text_Edit_4.text())))
+        self.dialog_for_new_agent_4.exec_()
+    def add_options_to_agent_index_4(self,MainWindow,new_agent):
+        self.Agent_Choice_4.addItem(new_agent)
+        count = self.Agent_Choice_4.count()
+        self.Agent_Choice_4.setCurrentIndex(count - 1)
+        self.dialog_for_new_agent_4.close()
+
+
+
+    '''Add New Commercial'''
+    def add_new_commercial(self,MainWindow):
+        self.dialog_for_new_commercial= QtGui.QDialog(self.Video)
+        self.add_option = QtGui.QPushButton("Add",self.dialog_for_new_commercial)
+        self.new_commercial_Text_Edit = QtGui.QLineEdit(self.dialog_for_new_commercial)
+        self.new_commercial_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option.move(85,80)
+        self.dialog_for_new_commercial.setWindowTitle("Add Commercial")
+        self.add_option.clicked.connect(lambda x: self.add_options_to_commercial_index(MainWindow,str(self.new_commercial_Text_Edit.text())))
+        self.dialog_for_new_commercial.exec_()
+    def add_options_to_commercial_index(self,MainWindow,new_commercial):
+        self.Commercial_Choice.addItem(new_commercial)
+        count = self.Commercial_Choice.count()
+        self.Commercial_Choice.setCurrentIndex(count - 1)
+        self.dialog_for_new_commercial.close()
+    
+
+    def add_new_commercial_2(self,MainWindow):
+        self.dialog_for_new_commercial_2= QtGui.QDialog(self.Video)
+        self.add_option_2 = QtGui.QPushButton("Add",self.dialog_for_new_commercial_2)
+        self.new_commercial_Text_Edit_2 = QtGui.QLineEdit(self.dialog_for_new_commercial_2)
+        self.new_commercial_Text_Edit_2.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option_2.move(85,80)
+        self.dialog_for_new_commercial_2.setWindowTitle("Add Commercial")
+        self.add_option_2.clicked.connect(lambda x: self.add_options_to_commercial_index_2(MainWindow,str(self.new_commercial_Text_Edit_2.text())))
+        self.dialog_for_new_commercial_2.exec_()
+    def add_options_to_commercial_index_2(self,MainWindow,new_commercial):
+        self.Commercial_Choice_2.addItem(new_commercial)
+        count = self.Commercial_Choice_2.count()
+        self.Commercial_Choice_2.setCurrentIndex(count - 1)
+        self.dialog_for_new_commercial_2.close()
+
+    def add_new_commercial_3(self,MainWindow):
+        self.dialog_for_new_commercial_3= QtGui.QDialog(self.Video)
+        self.add_option_3 = QtGui.QPushButton("Add",self.dialog_for_new_commercial_3)
+        self.new_commercial_Text_Edit_3 = QtGui.QLineEdit(self.dialog_for_new_commercial_3)
+        self.new_commercial_Text_Edit_3.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option_3.move(85,80)
+        self.dialog_for_new_commercial_3.setWindowTitle("Add Commercial")
+        self.add_option_3.clicked.connect(lambda x: self.add_options_to_commercial_index_3(MainWindow,str(self.new_commercial_Text_Edit_3.text())))
+        self.dialog_for_new_commercial_3.exec_()
+    def add_options_to_commercial_index_3(self,MainWindow,new_commercial):
+        self.Commercial_Choice_3.addItem(new_commercial)
+        count = self.Commercial_Choice_3.count()
+        self.Commercial_Choice_3.setCurrentIndex(count - 1)
+        self.dialog_for_new_commercial_3.close()
+    
+    
+    def add_new_commercial_4(self,MainWindow):
+        self.dialog_for_new_commercial_4= QtGui.QDialog(self.Video)
+        self.add_option_4 = QtGui.QPushButton("Add",self.dialog_for_new_commercial_4)
+        self.new_commercial_Text_Edit_4 = QtGui.QLineEdit(self.dialog_for_new_commercial_4)
+        self.new_commercial_Text_Edit_4.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option_4.move(85,80)
+        self.dialog_for_new_commercial_4.setWindowTitle("Add Commercial")
+        self.add_option_4.clicked.connect(lambda x: self.add_options_to_commercial_index_4(MainWindow,str(self.new_commercial_Text_Edit_4.text())))
+        self.dialog_for_new_commercial_4.exec_()
+    def add_options_to_commercial_index_4(self,MainWindow,new_commercial):
+        self.Commercial_Choice_4.addItem(new_commercial)
+        count = self.Commercial_Choice_4.count()
+        self.Commercial_Choice_4.setCurrentIndex(count - 1)
+        self.dialog_for_new_commercial_4.close()
+
+
+
+
+    '''Add New TV Stations'''
+    def add_tv_station(self,MainWindow):
+        self.dialog_for_tv_station_choice = QtGui.QDialog(self.Video)
+        self.add_option = QtGui.QPushButton("Add",self.dialog_for_tv_station_choice)
+        self.TV_Option_Text_Edit = QtGui.QLineEdit(self.dialog_for_tv_station_choice)
+        self.TV_Option_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option.move(85,80)
+        self.dialog_for_tv_station_choice.setWindowTitle("Add TV-Station")
+        self.add_option.clicked.connect(lambda x: self.add_options_to_index(MainWindow,str(self.TV_Option_Text_Edit.text())))
+        self.dialog_for_tv_station_choice.exec_()
+    def add_options_to_index(self,MainWindow,new_tv_station):
+        self.Tv_Station_Choice.addItem(new_tv_station)
+        count = self.Tv_Station_Choice.count()
+        self.Tv_Station_Choice.setCurrentIndex(count - 1)
+        self.dialog_for_tv_station_choice.close()
+    
+    '''Add New Radio Station'''
+
+    def add_radio_station(self,MainWindow):
+        self.dialog_for_radio_station_choice = QtGui.QDialog(self.Audio)
+        self.add_radio_option = QtGui.QPushButton("Add",self.dialog_for_radio_station_choice)
+        self.RADIO_Option_Text_Edit = QtGui.QLineEdit(self.dialog_for_radio_station_choice)
+        self.RADIO_Option_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_radio_option.move(85,80)
+        self.dialog_for_radio_station_choice.setWindowTitle("Add RADIO-Station")
+        self.add_radio_option.clicked.connect(lambda x: self.add_options_to_radio_index(MainWindow,str(self.RADIO_Option_Text_Edit.text())))
+        self.dialog_for_radio_station_choice.exec_()
+    def add_options_to_radio_index(self,MainWindow,new_radio_station):
+        self.Radio_Station_Choice.addItem(new_radio_station)
+        self.Radio_Station_Choice.setItemText(0,new_radio_station)
+        self.dialog_for_radio_station_choice.close()
+    
     def browse_ad_additional_button_click(self):
         self.Ad_Text_Edit.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Video" ,default_path,"Video (*.mpg *.flv *.wmv *.mpv *.mp4 *.avi)"))
     def browse_ad_additional_button_click_2(self):
@@ -414,40 +718,85 @@ class Ui_MainWindow(object):
         self.Ad_Text_Edit_3.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Video" ,default_path,"Video (*.mpg *.flv *.wmv *.mpv *.mp4 *.avi)"))
     def browse_ad_additional_button_click_4(self):
         self.Ad_Text_Edit_4.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Video" ,default_path,"Video (*.mpg *.flv *.wmv *.mpv *.mp4 *.avi)"))
-    def more_ad_add(self):
+    def more_ad_add(self,MainWindow):
         self.count += 1 
         if self.count ==1:
             self.Client_label_2.setGeometry(QtCore. QRect(10, 50+self.count*120, 100, 20))
-            self.Client_label_2.setText("Client_" + str(self.count))
+            self.Client_label_2.setText("Agent-" + str(self.count))
             self.Commercial_2.setGeometry(QtCore.QRect(10, 80+self.count*120, 100, 20))
-            self.Commercial_2.setText("Commercial_" + str(self.count))
+            self.Commercial_2.setText("Commercial-" + str(self.count))
             self.Ad_label_2.setGeometry(QtCore.QRect(10, 110+self.count*120, 100, 20))
-            self.Ad_label_2.setText("Ad_" + str(self.count))
+            self.Ad_label_2.setText("Ad-" + str(self.count))
             self.Client_Text_Edit_2.setGeometry(QtCore.QRect(80,50+self.count*120,150,20))
+            self.Agent_Choice_2.setGeometry(QtCore.QRect(80,50+self.count*120,150,20))
+
             self.Commercial_Text_Edit_2.setGeometry(QtCore.QRect(80,80+self.count*120,150,20))
+            self.Commercial_Choice_2.setGeometry(QtCore.QRect(80,80+self.count*120,150,20))
+
+            
             self.Ad_Text_Edit_2.setGeometry(QtCore.QRect(80,110+self.count*120,500,20))
             self.browse_2.setGeometry(QtCore.QRect(600,105+self.count*120,75,25))
             self.browse_2.setText("Browse")
             self.remove.setGeometry(QtCore.QRect(600,80+self.count*120,75,25))
             self.remove.setText("Remove")
+            
+            
+            self.Agent_Choice_2.currentIndexChanged.connect(self.selectionchanged_2)
+            self.Agent_Choice_2.addItems(["Cactus", "Spotlight","Berry","251","Zeleman"])
+
+            self.Agent_Add_Choice_2 = QtGui.QPushButton(self.Video)
+            self.Agent_Add_Choice_2.setGeometry(QtCore.QRect(240,47+self.count*120,75,25))
+            self.Agent_Add_Choice_2.setText("Add")
+            self.Agent_Add_Choice_2.clicked.connect(lambda x: self.add_new_agent_2(MainWindow))
+            
+            self.Commercial_Add_Choice_2 = QtGui.QPushButton(self.Video)
+            self.Commercial_Add_Choice_2.setGeometry(QtCore.QRect(240,80+self.count*120,75,25))
+            self.Commercial_Add_Choice_2.setText("Add")
+            self.Commercial_Add_Choice_2.clicked.connect(lambda x: self.add_new_commercial_2(MainWindow))
+            
+            self.Agent_Add_Choice_2.show()
+            self.Commercial_Add_Choice_2.show()
             self.Client_label_2.show()
             self.Commercial_2.show()
             self.Ad_label_2.show()
-            self.Client_Text_Edit_2.show()
-            self.Commercial_Text_Edit_2.show()
+            # self.Client_Text_Edit_2.show()
+            self.Agent_Choice_2.show()
+            # self.Commercial_Text_Edit_2.show()
+            self.Commercial_Choice_2.show()
             self.Ad_Text_Edit_2.show()
             self.browse_2.show()
             self.remove.show()
             self.remove.clicked.connect(lambda x: self.remove_button(self.count))
         if self.count ==2:
             self.Client_label_3.setGeometry(QtCore.QRect(10, 50+self.count*120, 100, 20))
-            self.Client_label_3.setText("Client_" + str(self.count))
+            self.Client_label_3.setText("Agent-" + str(self.count))
             self.Commercial_3.setGeometry(QtCore.QRect(10, 80+self.count*120, 100, 20))
-            self.Commercial_3.setText("Commercial_" + str(self.count))
+            self.Commercial_3.setText("Commercial-" + str(self.count))
             self.Ad_label_3.setGeometry(QtCore.QRect(10, 110+self.count*120, 100, 20))
-            self.Ad_label_3.setText("Ad_" + str(self.count))
+            self.Ad_label_3.setText("Ad-" + str(self.count))
+            
             self.Client_Text_Edit_3.setGeometry(QtCore.QRect(80,50+self.count*120,150,20))
+            self.Agent_Choice_3.setGeometry(QtCore.QRect(80,50+self.count*120,150,20))
+
             self.Commercial_Text_Edit_3.setGeometry(QtCore.QRect(80,80+self.count*120,150,20))
+            self.Commercial_Choice_3.setGeometry(QtCore.QRect(80,80+self.count*120,150,20))
+
+            self.Agent_Choice_3.currentIndexChanged.connect(self.selectionchanged_3)
+            self.Agent_Choice_3.addItems(["Spotlight","Berry","251","Zeleman", "Cactus"])
+
+            self.Agent_Add_Choice_3 = QtGui.QPushButton(self.Video)
+            self.Agent_Add_Choice_3.setGeometry(QtCore.QRect(240,47+self.count*120,75,25))
+            self.Agent_Add_Choice_3.setText("Add")
+            self.Agent_Add_Choice_3.clicked.connect(lambda x: self.add_new_agent_3_4(MainWindow))
+            
+            self.Commercial_Add_Choice_3 = QtGui.QPushButton(self.Video)
+            self.Commercial_Add_Choice_3.setGeometry(QtCore.QRect(240,80+self.count*120,75,25))
+            self.Commercial_Add_Choice_3.setText("Add")
+            self.Commercial_Add_Choice_3.clicked.connect(lambda x: self.add_new_commercial_3_4(MainWindow))
+   
+            self.Agent_Add_Choice_3.show()
+            self.Commercial_Add_Choice_3.show()
+
             self.Ad_Text_Edit_3.setGeometry(QtCore.QRect(80,110+self.count*120,500,20))
             self.browse_3.setGeometry(QtCore.QRect(600,105+self.count*120,75,25))
             self.browse_3.setText("Browse")
@@ -456,8 +805,12 @@ class Ui_MainWindow(object):
             self.Client_label_3.show()
             self.Commercial_3.show()
             self.Ad_label_3.show()
-            self.Client_Text_Edit_3.show()
-            self.Commercial_Text_Edit_3.show()
+            # self.Client_Text_Edit_3.show()
+            self.Agent_Choice_3.show()
+
+            # self.Commercial_Text_Edit_3.show()
+            self.Commercial_Choice_3.show()
+
             self.Ad_Text_Edit_3.show()
             self.browse_3.show()
             self.remove.setDisabled(True)
@@ -466,14 +819,40 @@ class Ui_MainWindow(object):
 
         if self.count ==3:
             self.Client_label_4.setGeometry(QtCore.QRect(10, 50+self.count*120, 100, 20))
-            self.Client_label_4.setText("Client_" + str(self.count))
+            self.Client_label_4.setText("Agent-" + str(self.count))
 
             self.Commercial_4.setGeometry(QtCore.QRect(10, 80+self.count*120, 100, 20))
-            self.Commercial_4.setText("Commercial_" + str(self.count))
+            self.Commercial_4.setText("Commercial-" + str(self.count))
             self.Ad_label_4.setGeometry(QtCore.QRect(10, 110+self.count*120, 100, 20))
-            self.Ad_label_4.setText("Ad_" + str(self.count))
+            self.Ad_label_4.setText("Ad-" + str(self.count))
             self.Client_Text_Edit_4.setGeometry(QtCore.QRect(80,50+self.count*120,150,20))
+            self.Agent_Choice_4.setGeometry(QtCore.QRect(80,50+self.count*120,150,20))
+
+            
+            
+            self.Agent_Choice_4.currentIndexChanged.connect(self.selectionchanged_4)
+            self.Agent_Choice_4.addItems(["Berry","251","Zeleman", "Cactus", "Spotlight"])
+
+            
+            
             self.Commercial_Text_Edit_4.setGeometry(QtCore.QRect(80,80+self.count*120,150,20))
+            self.Commercial_Choice_4.setGeometry(QtCore.QRect(80,80+self.count*120,150,20))
+ 
+            self.Agent_Add_Choice_4 = QtGui.QPushButton(self.Video)
+            self.Agent_Add_Choice_4.setGeometry(QtCore.QRect(240,47+self.count*120,75,25))
+            self.Agent_Add_Choice_4.setText("Add")
+            self.Agent_Add_Choice_4.clicked.connect(lambda x: self.add_new_agent_4(MainWindow))
+            
+            self.Commercial_Add_Choice_4 = QtGui.QPushButton(self.Video)
+            self.Commercial_Add_Choice_4.setGeometry(QtCore.QRect(240,80+self.count*120,75,25))
+            self.Commercial_Add_Choice_4.setText("Add")
+            self.Commercial_Add_Choice_4.clicked.connect(lambda x: self.add_new_commercial_4(MainWindow))
+   
+            self.Agent_Add_Choice_4.show()
+            self.Commercial_Add_Choice_4.show()
+
+
+
             self.Ad_Text_Edit_4.setGeometry(QtCore.QRect(80,110+self.count*120,500,20))
             self.browse_4.setGeometry(QtCore.QRect(600,105+self.count*120,75,25))
             self.browse_4.setText("Browse")
@@ -482,8 +861,10 @@ class Ui_MainWindow(object):
             self.Client_label_4.show()
             self.Commercial_4.show()
             self.Ad_label_4.show()
-            self.Client_Text_Edit_4.show()
-            self.Commercial_Text_Edit_4.show()
+            # self.Client_Text_Edit_4.show()
+            self.Agent_Choice_4.show()
+            # self.Commercial_Text_Edit_4.show()
+            self.Commercial_Choice_4.show()
             self.Ad_Text_Edit_4.show()
             self.browse_4.show()
             self.remove_2.setDisabled(True)
@@ -497,6 +878,10 @@ class Ui_MainWindow(object):
         self.Ad_label_2.hide()
         self.Client_Text_Edit_2.hide()
         self.Commercial_Text_Edit_2.hide()
+        self.Agent_Choice_2.hide()
+        self.Commercial_Choice_2.hide()
+        self.Agent_Add_Choice_2.hide()
+        self.Commercial_Add_Choice_2.hide()
         self.Ad_Text_Edit_2.hide()
         self.browse_2.hide()
         self.remove.hide()
@@ -508,9 +893,14 @@ class Ui_MainWindow(object):
         self.Ad_label_3.hide()
         self.Client_Text_Edit_3.hide()
         self.Commercial_Text_Edit_3.hide()
+        self.Agent_Choice_3.hide()
+        self.Commercial_Choice_3.hide()
+        self.Agent_Add_Choice_3.hide()
+        self.Commercial_Add_Choice_3.hide()
         self.Ad_Text_Edit_3.hide()
         self.browse_3.hide()
         self.remove_2.hide()
+        
         self.remove.setDisabled(False)
 
         self.count = 1
@@ -520,6 +910,10 @@ class Ui_MainWindow(object):
         self.Ad_label_4.hide()
         self.Client_Text_Edit_4.hide()
         self.Commercial_Text_Edit_4.hide()
+        self.Agent_Choice_4.hide()
+        self.Commercial_Choice_4.hide()
+        self.Agent_Add_Choice_4.hide()
+        self.Commercial_Add_Choice_4.hide()
         self.Ad_Text_Edit_4.hide()
         self.browse_4.hide()
         self.remove_3.hide()
@@ -558,11 +952,11 @@ class Ui_MainWindow(object):
         self.audio_count += 1 
         if self.audio_count ==1:
             self.audio_Client_label_2.setGeometry(QtCore. QRect(10, 50+self.audio_count*120, 100, 20))
-            self.audio_Client_label_2.setText("Client_" + str(self.audio_count))
+            self.audio_Client_label_2.setText("Agent-" + str(self.audio_count))
             self.audio_Commercial_2.setGeometry(QtCore.QRect(10, 80+self.audio_count*120, 100, 20))
-            self.audio_Commercial_2.setText("Commercial_" + str(self.audio_count))
+            self.audio_Commercial_2.setText("Commercial-" + str(self.audio_count))
             self.audio_Ad_label_2.setGeometry(QtCore.QRect(10, 110+self.audio_count*120, 100, 20))
-            self.audio_Ad_label_2.setText("Radio Ad_" + str(self.audio_count))
+            self.audio_Ad_label_2.setText("Radio Ad-" + str(self.audio_count))
             self.audio_Client_Text_Edit_2.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
             self.audio_Commercial_Text_Edit_2.setGeometry(QtCore.QRect(80,80+self.audio_count*120,150,20))
             self.audio_Ad_Text_Edit_2.setGeometry(QtCore.QRect(80,110+self.audio_count*120,500,20))
@@ -581,11 +975,11 @@ class Ui_MainWindow(object):
             self.audio_remove.clicked.connect(lambda x: self.audio_remove_button(self.audio_count))
         if self.audio_count ==2:
             self.audio_Client_label_3.setGeometry(QtCore.QRect(10, 50+self.audio_count*120, 100, 20))
-            self.audio_Client_label_3.setText("Client_" + str(self.audio_count))
+            self.audio_Client_label_3.setText("Agent-" + str(self.audio_count))
             self.audio_Commercial_3.setGeometry(QtCore.QRect(10, 80+self.audio_count*120, 100, 20))
-            self.audio_Commercial_3.setText("Commercial_" + str(self.audio_count))
+            self.audio_Commercial_3.setText("Commercial-" + str(self.audio_count))
             self.audio_Ad_label_3.setGeometry(QtCore.QRect(10, 110+self.audio_count*120, 100, 20))
-            self.audio_Ad_label_3.setText("Radio Ad_" + str(self.audio_count))
+            self.audio_Ad_label_3.setText("Radio Ad-" + str(self.audio_count))
             self.audio_Client_Text_Edit_3.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
             self.audio_Commercial_Text_Edit_3.setGeometry(QtCore.QRect(80,80+self.audio_count*120,150,20))
             self.audio_Ad_Text_Edit_3.setGeometry(QtCore.QRect(80,110+self.audio_count*120,500,20))
@@ -606,12 +1000,12 @@ class Ui_MainWindow(object):
 
         if self.audio_count ==3:
             self.audio_Client_label_4.setGeometry(QtCore.QRect(10, 50+self.audio_count*120, 100, 20))
-            self.audio_Client_label_4.setText("Client_" + str(self.audio_count))
+            self.audio_Client_label_4.setText("Agent-" + str(self.audio_count))
 
             self.audio_Commercial_4.setGeometry(QtCore.QRect(10, 80+self.audio_count*120, 100, 20))
-            self.audio_Commercial_4.setText("Commercial_" + str(self.audio_count))
+            self.audio_Commercial_4.setText("Commercial-" + str(self.audio_count))
             self.audio_Ad_label_4.setGeometry(QtCore.QRect(10, 110+self.audio_count*120, 100, 20))
-            self.audio_Ad_label_4.setText("Radio Ad_" + str(self.count))
+            self.audio_Ad_label_4.setText("Radio Ad-" + str(self.count))
             self.audio_Client_Text_Edit_4.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
             self.audio_Commercial_Text_Edit_4.setGeometry(QtCore.QRect(80,80+self.audio_count*120,150,20))
             self.audio_Ad_Text_Edit_4.setGeometry(QtCore.QRect(80,110+self.audio_count*120,500,20))
