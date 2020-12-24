@@ -326,7 +326,7 @@ class Ui_MainWindow(object):
 
         
         self.Radio_Stations = QtGui.QLabel(self.Audio)
-        self.Radio_Stations.setGeometry(QtCore.QRect(10, 140, 100, 20))
+        self.Radio_Stations.setGeometry(QtCore.QRect(10, 20, 100, 20))
         self.Radio_Stations.setText("Radio Station")
         
         
@@ -336,18 +336,47 @@ class Ui_MainWindow(object):
         self.audio_Commercial_Text_Edit = QtGui.QLineEdit(self.Audio)
         self.audio_Commercial_Text_Edit.setGeometry(QtCore.QRect(80,80,150,20))
         
+
+        self.radio_Agent_Choice = QtGui.QComboBox(self.Audio)
+        self.radio_Agent_Choice.setGeometry(QtCore.QRect(80,50,150,20))
+        
+        self.radio_Commercial_Choice = QtGui.QComboBox(self.Audio)
+        self.radio_Commercial_Choice.setGeometry(QtCore.QRect(80,80,150,20))
+        
+        
+       
         self.audio_Ad_Text_Edit = QtGui.QLineEdit(self.Audio)
         self.audio_Ad_Text_Edit.setGeometry(QtCore.QRect(80,110,500,20))
 
         self.Radio_Station_Choice = QtGui.QComboBox(self.Audio)
-        self.Radio_Station_Choice.setGeometry(QtCore.QRect(80,140,150,20))
-        
+        self.Radio_Station_Choice.setGeometry(QtCore.QRect(80,20,150,20))
+
 
         self.Radio_Station_Add_Choice = QtGui.QPushButton(self.Audio)
-        self.Radio_Station_Add_Choice.setGeometry(QtCore.QRect(240,137,75,25))
+        self.Radio_Station_Add_Choice.setGeometry(QtCore.QRect(240,17,75,25))
         self.Radio_Station_Add_Choice.setText("Add")
         self.Radio_Station_Add_Choice.clicked.connect(lambda x: self.add_radio_station(MainWindow))
 
+        
+        self.radio_Agent_Add_Choice = QtGui.QPushButton(self.Audio)
+        self.radio_Agent_Add_Choice.setGeometry(QtCore.QRect(240,47,75,25))
+        self.radio_Agent_Add_Choice.setText("Add")
+        self.radio_Agent_Add_Choice.clicked.connect(lambda x: self.add_new_radio_agent(MainWindow))
+        
+        self.radio_Commercial_Add_Choice = QtGui.QPushButton(self.Audio)
+        self.radio_Commercial_Add_Choice.setGeometry(QtCore.QRect(240,77,75,25))
+        self.radio_Commercial_Add_Choice.setText("Add")
+        self.radio_Commercial_Add_Choice.clicked.connect(lambda x: self.add_new_radio_commercial(MainWindow))
+        
+
+
+
+        
+        
+        
+        
+        self.radio_Agent_Choice.currentIndexChanged.connect(self.radio_selectionchanged)
+        self.radio_Agent_Choice.addItems(["Zeleman", "Cactus", "Spotlight","Berry","251"])
 
 
         self.Radio_Station_Choice.addItems(["FMADDIS", "SHEGERFM", "AHADU","AFROFM"])
@@ -370,7 +399,7 @@ class Ui_MainWindow(object):
         self.audio_fingerprint.setText("Fingerprint")
         
         self.audio_browse.clicked.connect(self.audio_browse_ad_additional_button_click)
-        self.audio_add_ad.clicked.connect(self.audio_more_ad_add)
+        self.audio_add_ad.clicked.connect(lambda x: self.audio_more_ad_add(MainWindow))
         self.audio_count = 0 
 
         self.audio_Client_label_2 = QtGui.QLabel(self.Audio)
@@ -465,6 +494,21 @@ class Ui_MainWindow(object):
         self.audio_Commercial_4.text()
         self.audio_Ad_Text_Edit_4.text()
 
+        self.radio_Agent_Choice_2 = QtGui.QComboBox(self.Audio)
+        self.radio_Agent_Choice_2.hide()
+        self.radio_Agent_Choice_3 = QtGui.QComboBox(self.Audio)
+        self.radio_Agent_Choice_3.hide()
+        self.radio_Agent_Choice_4 = QtGui.QComboBox(self.Audio)
+        self.radio_Agent_Choice_4.hide()
+
+
+        self.radio_Commercial_Choice_2 = QtGui.QComboBox(self.Audio)
+        self.radio_Commercial_Choice_2.hide()
+        self.radio_Commercial_Choice_3 = QtGui.QComboBox(self.Audio)
+        self.radio_Commercial_Choice_3.hide()
+        self.radio_Commercial_Choice_4 = QtGui.QComboBox(self.Audio)
+        self.radio_Commercial_Choice_4.hide()
+
         self.back = QtGui.QPushButton(self.Video)
         self.back.setGeometry(QtCore.QRect(500,510,100,25))
         self.back.setText("Back")
@@ -551,7 +595,74 @@ class Ui_MainWindow(object):
             self.Commercial_Choice_4.clear()
             self.Commercial_Choice_4.addItems(["Senq"])
     
-    '''Add New Agent'''    
+    def radio_selectionchanged(self):
+        if (self.radio_Agent_Choice.currentIndex() == 0):
+            self.radio_Commercial_Choice.clear()
+
+            self.radio_Commercial_Choice.addItems(["Coca Cola", "Meta Beer","Vera Pasta"])
+
+        if (self.radio_Agent_Choice.currentIndex() == 1):
+            self.radio_Commercial_Choice.clear()
+            self.radio_Commercial_Choice.addItems(["Knoor", "Tasties Soya"])
+        if (self.radio_Agent_Choice.currentIndex() == 2):
+            self.radio_Commercial_Choice.clear()
+            self.radio_Commercial_Choice.addItems(["Sun Chips", "Malta"])
+        if (self.radio_Agent_Choice.currentIndex() == 3):
+            self.radio_Commercial_Choice.clear()
+            self.radio_Commercial_Choice.addItems(["Sheno"])        
+    
+    def radio_selectionchanged_2(self):
+        if (self.radio_Agent_Choice_2.currentIndex() == 4):
+            self.radio_Commercial_Choice_2.clear()
+
+            self.radio_Commercial_Choice_2.addItems(["Coca Cola", "Meta Beer","Vera Pasta"])
+
+        if (self.radio_Agent_Choice_2.currentIndex() == 0):
+            self.radio_Commercial_Choice_2.clear()
+            self.radio_Commercial_Choice_2.addItems(["Knoor", "Tasties Soya"])
+        if (self.radio_Agent_Choice_2.currentIndex() == 1):
+            self.radio_Commercial_Choice_2.clear()
+            self.radio_Commercial_Choice_2.addItems(["Sun Chips", "Malta"])
+        if (self.radio_Agent_Choice_2.currentIndex() == 2):
+            self.radio_Commercial_Choice_2.clear()
+            self.radio_Commercial_Choice_2.addItems(["Sheno"]) 
+
+    def radio_selectionchanged_3(self):
+        if (self.radio_Agent_Choice_3.currentIndex() == 3):
+            self.radio_Commercial_Choice_3.clear()
+
+            self.radio_Commercial_Choice_3.addItems(["Coca Cola", "Meta Beer","Vera Pasta"])
+
+        if (self.radio_Agent_Choice_3.currentIndex() == 4):
+            self.radio_Commercial_Choice_3.clear()
+            self.radio_Commercial_Choice_3.addItems(["Knoor", "Tasties Soya"])
+        if (self.radio_Agent_Choice_3.currentIndex() == 0):
+            self.radio_Commercial_Choice_3.clear()
+            self.radio_Commercial_Choice_3.addItems(["Sun Chips", "Malta"])
+        if (self.radio_Agent_Choice_3.currentIndex() == 1):
+            self.radio_Commercial_Choice_3.clear()
+            self.radio_Commercial_Choice_3.addItems(["Sheno"]) 
+
+    def radio_selectionchanged_4(self):
+        if (self.radio_Agent_Choice_4.currentIndex() == 2):
+            self.radio_Commercial_Choice_4.clear()
+
+            self.radio_Commercial_Choice_4.addItems(["Coca Cola", "Meta Beer","Vera Pasta"])
+
+        if (self.radio_Agent_Choice_4.currentIndex() == 3):
+            self.radio_Commercial_Choice_4.clear()
+            self.radio_Commercial_Choice_4.addItems(["Knoor", "Tasties Soya"])
+        if (self.radio_Agent_Choice_4.currentIndex() == 4):
+            self.radio_Commercial_Choice_4.clear()
+            self.radio_Commercial_Choice_4.addItems(["Sun Chips", "Malta"])
+        if (self.radio_Agent_Choice_4.currentIndex() == 0):
+            self.radio_Commercial_Choice_4.clear()
+            self.radio_Commercial_Choice_4.addItems(["Sheno"]) 
+
+
+
+
+    '''Add New TV Agent'''    
     def add_new_agent(self,MainWindow):
         self.dialog_for_new_agent= QtGui.QDialog(self.Video)
         self.add_option = QtGui.QPushButton("Add",self.dialog_for_new_agent)
@@ -609,10 +720,77 @@ class Ui_MainWindow(object):
         count = self.Agent_Choice_4.count()
         self.Agent_Choice_4.setCurrentIndex(count - 1)
         self.dialog_for_new_agent_4.close()
+   
+    '''Add New Radio Agent'''
+    def add_new_radio_agent(self,MainWindow):
+        self.radio_dialog_for_new_agent= QtGui.QDialog(self.Audio)
+        self.radio_add_option = QtGui.QPushButton("Add",self.radio_dialog_for_new_agent)
+        self.new_radio_agent_Text_Edit = QtGui.QLineEdit(self.radio_dialog_for_new_agent)
+        self.new_radio_agent_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
+        self.radio_add_option.move(85,80)
+        self.radio_dialog_for_new_agent.setWindowTitle("Add Agent")
+        self.radio_add_option.clicked.connect(lambda x: self.add_options_to_radio_agent_index(MainWindow,str(self.new_radio_agent_Text_Edit.text())))
+        self.radio_dialog_for_new_agent.exec_()
+    def add_options_to_radio_agent_index(self,MainWindow,new_agent):
+        self.radio_Agent_Choice.addItem(new_agent)
+        count = self.radio_Agent_Choice.count()
+        self.radio_Agent_Choice.setCurrentIndex(count - 1)
+        self.radio_dialog_for_new_agent.close()
+
+
+    def add_new_radio_agent_2(self,MainWindow):
+        self.radio_dialog_for_new_agent_2= QtGui.QDialog(self.Audio)
+        self.radio_add_option_2 = QtGui.QPushButton("Add",self.radio_dialog_for_new_agent_2)
+        self.new_radio_agent_Text_Edit_2 = QtGui.QLineEdit(self.radio_dialog_for_new_agent_2)
+        self.new_radio_agent_Text_Edit_2.setGeometry(QtCore.QRect(50,50,150,20))
+        self.radio_add_option_2.move(85,80)
+        self.radio_dialog_for_new_agent_2.setWindowTitle("Add Agent")
+        self.radio_add_option_2.clicked.connect(lambda x: self.add_options_to_radio_agent_index_2(MainWindow,str(self.new_radio_agent_Text_Edit_2.text())))
+        self.radio_dialog_for_new_agent_2.exec_()
+    def add_options_to_radio_agent_index_2(self,MainWindow,new_agent):
+        self.radio_Agent_Choice_2.addItem(new_agent)
+        count = self.radio_Agent_Choice_2.count()
+        self.radio_Agent_Choice_2.setCurrentIndex(count - 1)
+        self.radio_dialog_for_new_agent_2.close()
+
+    def add_new_radio_agent_3(self,MainWindow):
+        self.radio_dialog_for_new_agent_3= QtGui.QDialog(self.Audio)
+        self.radio_add_option_3 = QtGui.QPushButton("Add",self.radio_dialog_for_new_agent_3)
+        self.new_radio_agent_Text_Edit_3 = QtGui.QLineEdit(self.radio_dialog_for_new_agent_3)
+        self.new_radio_agent_Text_Edit_3.setGeometry(QtCore.QRect(50,50,150,20))
+        self.radio_add_option_3.move(85,80)
+        self.radio_dialog_for_new_agent_3.setWindowTitle("Add Agent")
+        self.radio_add_option_3.clicked.connect(lambda x: self.add_options_to_radio_agent_index_3(MainWindow,str(self.new_radio_agent_Text_Edit_3.text())))
+        self.radio_dialog_for_new_agent_3.exec_()
+    def add_options_to_radio_agent_index_3(self,MainWindow,new_agent):
+        self.radio_Agent_Choice_3.addItem(new_agent)
+        count = self.radio_Agent_Choice_3.count()
+        self.radio_Agent_Choice_3.setCurrentIndex(count - 1)
+        self.radio_dialog_for_new_agent_3.close()
+
+    def add_new_radio_agent_4(self,MainWindow):
+        self.radio_dialog_for_new_agent_4= QtGui.QDialog(self.Audio)
+        self.radio_add_option_4 = QtGui.QPushButton("Add",self.radio_dialog_for_new_agent_4)
+        self.new_radio_agent_Text_Edit_4 = QtGui.QLineEdit(self.radio_dialog_for_new_agent_4)
+        self.new_radio_agent_Text_Edit_4.setGeometry(QtCore.QRect(50,50,150,20))
+        self.radio_add_option_4.move(85,80)
+        self.radio_dialog_for_new_agent_4.setWindowTitle("Add Agent")
+        self.radio_add_option_4.clicked.connect(lambda x: self.add_options_to_radio_agent_index_4(MainWindow,str(self.new_radio_agent_Text_Edit_4.text())))
+        self.radio_dialog_for_new_agent_4.exec_()
+    def add_options_to_radio_agent_index_4(self,MainWindow,new_agent):
+        self.radio_Agent_Choice_4.addItem(new_agent)
+        count = self.radio_Agent_Choice_4.count()
+        self.radio_Agent_Choice_4.setCurrentIndex(count - 1)
+        self.radio_dialog_for_new_agent_4.close()
+
+
+    
+
+    
 
 
 
-    '''Add New Commercial'''
+    '''Add New TV Commercial'''
     def add_new_commercial(self,MainWindow):
         self.dialog_for_new_commercial= QtGui.QDialog(self.Video)
         self.add_option = QtGui.QPushButton("Add",self.dialog_for_new_commercial)
@@ -675,6 +853,70 @@ class Ui_MainWindow(object):
         self.Commercial_Choice_4.setCurrentIndex(count - 1)
         self.dialog_for_new_commercial_4.close()
 
+
+    '''Add New Radio Commercial'''
+    def add_new_radio_commercial(self,MainWindow):
+        self.radio_dialog_for_new_commercial= QtGui.QDialog(self.Audio)
+        self.radio_add_option = QtGui.QPushButton("Add",self.radio_dialog_for_new_commercial)
+        self.new_radio_commercial_Text_Edit = QtGui.QLineEdit(self.radio_dialog_for_new_commercial)
+        self.new_radio_commercial_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
+        self.radio_add_option.move(85,80)
+        self.radio_dialog_for_new_commercial.setWindowTitle("Add Commercial")
+        self.radio_add_option.clicked.connect(lambda x: self.add_options_to_radio_commercial_index(MainWindow,str(self.new_radio_commercial_Text_Edit.text())))
+        self.radio_dialog_for_new_commercial.exec_()
+    def add_options_to_radio_commercial_index(self,MainWindow,new_commercial):
+        self.radio_Commercial_Choice.addItem(new_commercial)
+        count = self.radio_Commercial_Choice.count()
+        self.radio_Commercial_Choice.setCurrentIndex(count - 1)
+        self.radio_dialog_for_new_commercial.close()
+    
+
+    def add_new_radio_commercial_2(self,MainWindow):
+        self.radio_dialog_for_new_commercial_2= QtGui.QDialog(self.Audio)
+        self.radio_add_option_2 = QtGui.QPushButton("Add",self.radio_dialog_for_new_commercial_2)
+        self.new_radio_commercial_Text_Edit_2 = QtGui.QLineEdit(self.radio_dialog_for_new_commercial_2)
+        self.new_radio_commercial_Text_Edit_2.setGeometry(QtCore.QRect(50,50,150,20))
+        self.radio_add_option_2.move(85,80)
+        self.radio_dialog_for_new_commercial_2.setWindowTitle("Add Commercial")
+        self.radio_add_option_2.clicked.connect(lambda x: self.add_options_to_radio_commercial_index_2(MainWindow,str(self.new_radio_commercial_Text_Edit_2.text())))
+        self.radio_dialog_for_new_commercial_2.exec_()
+    def add_options_to_radio_commercial_index_2(self,MainWindow,new_commercial):
+        self.radio_Commercial_Choice_2.addItem(new_commercial)
+        count = self.radio_Commercial_Choice_2.count()
+        self.radio_Commercial_Choice_2.setCurrentIndex(count - 1)
+        self.radio_dialog_for_new_commercial_2.close()
+
+    def add_new_radio_commercial_3(self,MainWindow):
+        self.radio_dialog_for_new_commercial_3= QtGui.QDialog(self.Audio)
+        self.radio_add_option_3 = QtGui.QPushButton("Add",self.radio_dialog_for_new_commercial_3)
+        self.new_radio_commercial_Text_Edit_3 = QtGui.QLineEdit(self.radio_dialog_for_new_commercial_3)
+        self.new_radio_commercial_Text_Edit_3.setGeometry(QtCore.QRect(50,50,150,20))
+        self.radio_add_option_3.move(85,80)
+        self.radio_dialog_for_new_commercial_3.setWindowTitle("Add Commercial")
+        self.radio_add_option_3.clicked.connect(lambda x: self.add_options_to_radio_commercial_index_3(MainWindow,str(self.new_radio_commercial_Text_Edit_3.text())))
+        self.radio_dialog_for_new_commercial_3.exec_()
+    def add_options_to_radio_commercial_index_3(self,MainWindow,new_commercial):
+        self.radio_Commercial_Choice_3.addItem(new_commercial)
+        count = self.radio_Commercial_Choice_3.count()
+        self.radio_Commercial_Choice_3.setCurrentIndex(count - 1)
+        self.radio_dialog_for_new_commercial_3.close()
+    
+    
+    def add_new_radio_commercial_4(self,MainWindow):
+        self.radio_dialog_for_new_commercial_4= QtGui.QDialog(self.Audio)
+        self.radio_add_option_4 = QtGui.QPushButton("Add",self.radio_dialog_for_new_commercial_4)
+        self.new_radio_commercial_Text_Edit_4 = QtGui.QLineEdit(self.radio_dialog_for_new_commercial_4)
+        self.new_radio_commercial_Text_Edit_4.setGeometry(QtCore.QRect(50,50,150,20))
+        self.radio_add_option_4.move(85,80)
+        self.radio_dialog_for_new_commercial_4.setWindowTitle("Add Commercial")
+        self.radio_add_option_4.clicked.connect(lambda x: self.add_options_to_radio_commercial_index_4(MainWindow,str(self.new_radio_commercial_Text_Edit_4.text())))
+        self.radio_dialog_for_new_commercial_4.exec_()
+    def add_options_to_radio_commercial_index_4(self,MainWindow,new_commercial):
+        self.radio_Commercial_Choice_4.addItem(new_commercial)
+        count = self.radio_Commercial_Choice_4.count()
+        self.radio_Commercial_Choice_4.setCurrentIndex(count - 1)
+        self.radio_dialog_for_new_commercial_4.close()
+    
 
 
 
@@ -938,8 +1180,6 @@ class Ui_MainWindow(object):
 
 
 
-
-
     def audio_browse_ad_additional_button_click(self):
         self.audio_Ad_Text_Edit.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Audio" ,default_path,"Audio (*.mp3 *.wma *.wav)"))
     def audio_browse_ad_additional_button_click_2(self):
@@ -948,7 +1188,7 @@ class Ui_MainWindow(object):
         self.audio_Ad_Text_Edit_3.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Audio" ,default_path,"Audio (*.mp3 *.wma *.wav)"))
     def audio_browse_ad_additional_button_click_4(self):
         self.audio_Ad_Text_Edit_4.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Audio" ,default_path,"Audio (*.mp3 *.wma *.wav)"))
-    def audio_more_ad_add(self):
+    def audio_more_ad_add(self,MainWindow):
         self.audio_count += 1 
         if self.audio_count ==1:
             self.audio_Client_label_2.setGeometry(QtCore. QRect(10, 50+self.audio_count*120, 100, 20))
@@ -958,6 +1198,24 @@ class Ui_MainWindow(object):
             self.audio_Ad_label_2.setGeometry(QtCore.QRect(10, 110+self.audio_count*120, 100, 20))
             self.audio_Ad_label_2.setText("Radio Ad-" + str(self.audio_count))
             self.audio_Client_Text_Edit_2.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
+            
+            self.radio_Agent_Choice_2.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
+            self.radio_Commercial_Choice_2.setGeometry(QtCore.QRect(80,80+self.audio_count*120,150,20))
+
+            self.radio_Agent_Choice_2.currentIndexChanged.connect(self.radio_selectionchanged_2)
+            self.radio_Agent_Choice_2.addItems(["Cactus", "Spotlight","Berry","251","Zeleman"])
+
+            self.radio_Agent_Add_Choice_2 = QtGui.QPushButton(self.Audio)
+            self.radio_Agent_Add_Choice_2.setGeometry(QtCore.QRect(240,47+self.audio_count*120,75,25))
+            self.radio_Agent_Add_Choice_2.setText("Add")
+            self.radio_Agent_Add_Choice_2.clicked.connect(lambda x: self.add_new_radio_agent_2(MainWindow))
+            
+            self.radio_Commercial_Add_Choice_2 = QtGui.QPushButton(self.Audio)
+            self.radio_Commercial_Add_Choice_2.setGeometry(QtCore.QRect(240,80+self.audio_count*120,75,25))
+            self.radio_Commercial_Add_Choice_2.setText("Add")
+            self.radio_Commercial_Add_Choice_2.clicked.connect(lambda x: self.add_new_radio_commercial_2(MainWindow))
+            
+            
             self.audio_Commercial_Text_Edit_2.setGeometry(QtCore.QRect(80,80+self.audio_count*120,150,20))
             self.audio_Ad_Text_Edit_2.setGeometry(QtCore.QRect(80,110+self.audio_count*120,500,20))
             self.audio_browse_2.setGeometry(QtCore.QRect(600,105+self.audio_count*120,75,25))
@@ -967,8 +1225,12 @@ class Ui_MainWindow(object):
             self.audio_Client_label_2.show()
             self.audio_Commercial_2.show()
             self.audio_Ad_label_2.show()
-            self.audio_Client_Text_Edit_2.show()
-            self.audio_Commercial_Text_Edit_2.show()
+            # self.audio_Client_Text_Edit_2.show()
+            # self.audio_Commercial_Text_Edit_2.show()
+            self.radio_Agent_Choice_2.show()
+            self.radio_Commercial_Choice_2.show()
+            self.radio_Agent_Add_Choice_2.show()
+            self.radio_Commercial_Add_Choice_2.show()
             self.audio_Ad_Text_Edit_2.show()
             self.audio_browse_2.show()
             self.audio_remove.show()
@@ -978,6 +1240,38 @@ class Ui_MainWindow(object):
             self.audio_Client_label_3.setText("Agent-" + str(self.audio_count))
             self.audio_Commercial_3.setGeometry(QtCore.QRect(10, 80+self.audio_count*120, 100, 20))
             self.audio_Commercial_3.setText("Commercial-" + str(self.audio_count))
+            
+            self.radio_Agent_Choice_3.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
+
+            self.radio_Commercial_Choice_3.setGeometry(QtCore.QRect(80,80+self.audio_count*120,150,20))
+
+            self.radio_Agent_Choice_3.currentIndexChanged.connect(self.radio_selectionchanged_3)
+
+            self.radio_Agent_Choice_3.addItems(["Spotlight","Berry","251","Zeleman", "Cactus"])
+
+            self.radio_Agent_Add_Choice_3 = QtGui.QPushButton(self.Audio)
+
+            self.radio_Agent_Add_Choice_3.setGeometry(QtCore.QRect(240,47+self.audio_count*120,75,25))
+
+            self.radio_Agent_Add_Choice_3.setText("Add")
+
+            self.radio_Agent_Add_Choice_3.clicked.connect(lambda x: self.add_new_radio_agent_3(MainWindow))
+
+            self.radio_Commercial_Add_Choice_3 = QtGui.QPushButton(self.Audio)
+
+            self.radio_Commercial_Add_Choice_3.setGeometry(QtCore.QRect(240,80+self.audio_count*120,75,25))
+
+            self.radio_Commercial_Add_Choice_3.setText("Add")
+
+            self.radio_Commercial_Add_Choice_3.clicked.connect(lambda x: self.add_new_radio_commercial_3(MainWindow))
+
+            self.radio_Agent_Add_Choice_3.show()
+
+            self.radio_Commercial_Add_Choice_3.show()
+
+            
+            
+            
             self.audio_Ad_label_3.setGeometry(QtCore.QRect(10, 110+self.audio_count*120, 100, 20))
             self.audio_Ad_label_3.setText("Radio Ad-" + str(self.audio_count))
             self.audio_Client_Text_Edit_3.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
@@ -987,11 +1281,13 @@ class Ui_MainWindow(object):
             self.audio_browse_3.setText("Browse")
             self.audio_remove_2.setGeometry(QtCore.QRect(600,80+self.audio_count*120,75,25))
             self.audio_remove_2.setText("Remove")
+            self.radio_Agent_Choice_3.show()
+            self.radio_Commercial_Choice_3.show()
             self.audio_Client_label_3.show()
             self.audio_Commercial_3.show()
             self.audio_Ad_label_3.show()
-            self.audio_Client_Text_Edit_3.show()
-            self.audio_Commercial_Text_Edit_3.show()
+            # self.audio_Client_Text_Edit_3.show()
+            # self.audio_Commercial_Text_Edit_3.show()
             self.audio_Ad_Text_Edit_3.show()
             self.audio_browse_3.show()
             self.audio_remove.setDisabled(True)
@@ -1008,6 +1304,35 @@ class Ui_MainWindow(object):
             self.audio_Ad_label_4.setText("Radio Ad-" + str(self.count))
             self.audio_Client_Text_Edit_4.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
             self.audio_Commercial_Text_Edit_4.setGeometry(QtCore.QRect(80,80+self.audio_count*120,150,20))
+            
+
+            self.radio_Agent_Choice_4.setGeometry(QtCore.QRect(80,50+self.audio_count*120,150,20))
+            
+            self.radio_Agent_Choice_4.currentIndexChanged.connect(self.radio_selectionchanged_4)
+            self.radio_Agent_Choice_4.addItems(["Berry","251","Zeleman", "Cactus", "Spotlight"])
+
+            self.radio_Commercial_Choice_4.setGeometry(QtCore.QRect(80,80+self.audio_count*120,150,20))
+ 
+            self.radio_Agent_Add_Choice_4 = QtGui.QPushButton(self.Audio)
+            self.radio_Agent_Add_Choice_4.setGeometry(QtCore.QRect(240,47+self.audio_count*120,75,25))
+            self.radio_Agent_Add_Choice_4.setText("Add")
+            self.radio_Agent_Add_Choice_4.clicked.connect(lambda x: self.add_new_radio_agent_4(MainWindow))
+            
+            self.radio_Commercial_Add_Choice_4 = QtGui.QPushButton(self.Audio)
+            self.radio_Commercial_Add_Choice_4.setGeometry(QtCore.QRect(240,80+self.audio_count*120,75,25))
+            self.radio_Commercial_Add_Choice_4.setText("Add")
+            self.radio_Commercial_Add_Choice_4.clicked.connect(lambda x: self.add_new_radio_commercial_4(MainWindow))
+   
+
+            self.radio_Agent_Choice_4.show()
+            self.radio_Commercial_Choice_4.show()
+
+            self.radio_Agent_Add_Choice_4.show()
+            self.radio_Commercial_Add_Choice_4.show()
+
+            
+            
+            
             self.audio_Ad_Text_Edit_4.setGeometry(QtCore.QRect(80,110+self.audio_count*120,500,20))
             self.audio_browse_4.setGeometry(QtCore.QRect(600,105+self.audio_count*120,75,25))
             self.audio_browse_4.setText("Browse")
@@ -1016,8 +1341,8 @@ class Ui_MainWindow(object):
             self.audio_Client_label_4.show()
             self.audio_Commercial_4.show()
             self.audio_Ad_label_4.show()
-            self.audio_Client_Text_Edit_4.show()
-            self.audio_Commercial_Text_Edit_4.show()
+            # self.audio_Client_Text_Edit_4.show()
+            # self.audio_Commercial_Text_Edit_4.show()
             self.audio_Ad_Text_Edit_4.show()
             self.audio_browse_4.show()
             self.audio_remove_2.setDisabled(True)
@@ -1031,6 +1356,10 @@ class Ui_MainWindow(object):
         self.audio_Ad_label_2.hide()
         self.audio_Client_Text_Edit_2.hide()
         self.audio_Commercial_Text_Edit_2.hide()
+        self.radio_Agent_Choice_2.hide()
+        self.radio_Commercial_Choice_2.hide()
+        self.radio_Agent_Add_Choice_2.hide()
+        self.radio_Commercial_Add_Choice_2.hide()
         self.audio_Ad_Text_Edit_2.hide()
         self.audio_browse_2.hide()
         self.audio_remove.hide()
@@ -1042,6 +1371,10 @@ class Ui_MainWindow(object):
         self.audio_Ad_label_3.hide()
         self.audio_Client_Text_Edit_3.hide()
         self.audio_Commercial_Text_Edit_3.hide()
+        self.radio_Agent_Choice_3.hide()
+        self.radio_Commercial_Choice_3.hide()
+        self.radio_Agent_Add_Choice_3.hide()
+        self.radio_Commercial_Add_Choice_3.hide()
         self.audio_Ad_Text_Edit_3.hide()
         self.audio_browse_3.hide()
         self.audio_remove_2.hide()
@@ -1054,6 +1387,10 @@ class Ui_MainWindow(object):
         self.audio_Ad_label_4.hide()
         self.audio_Client_Text_Edit_4.hide()
         self.audio_Commercial_Text_Edit_4.hide()
+        self.radio_Agent_Choice_4.hide()
+        self.radio_Commercial_Choice_4.hide()
+        self.radio_Agent_Add_Choice_4.hide()
+        self.radio_Commercial_Add_Choice_4.hide()
         self.audio_Ad_Text_Edit_4.hide()
         self.audio_browse_4.hide()
         self.audio_remove_3.hide()
@@ -1070,11 +1407,4 @@ class Ui_MainWindow(object):
         main_menu_ui = main_menu.Ui_MainWindow()
         main_menu_ui.setupUi(MainWindow)
         MainWindow.show()
-# if __name__ == "__main__":
-#     import sys
-#     app = QtGui.QApplication(sys.argv)
-#     MainWindow = QtGui.QMainWindow()
-#     ui = Ui_MainWindow()
-#     ui.setupUi(MainWindow)
-#     MainWindow.show()
-#     sys.exit(app.exec_())
+
