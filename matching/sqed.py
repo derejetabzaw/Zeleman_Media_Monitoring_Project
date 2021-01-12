@@ -6,9 +6,12 @@ import json
 
 def sqed( N, M, K, p, q ):
     total = 0
-    for i in xrange(N*M):      
-        for k in xrange(K):
-            total += (p[k][i]-q[k][i]) ** 2
+    try:
+        for i in xrange(N*M): 
+            for k in xrange(K):
+                total += (p[k][i]-q[k][i]) ** 2
+    except IndexError:
+        pass 
     d = total / (N*M*K)
     return d
 
@@ -23,15 +26,14 @@ def main():
     except IndexError:
         print >>sys.stderr, "usage: {0} N M K p.json q.json".format(sys.argv[0])
         return
-    
+
     with open(pfilename) as f:
         p = json.load(f)
 
     with open(qfilename) as f:
         q = json.load(f)
 
-
-    print sqed( N, M, K, p[1:], q[1:])
+    print sqed( N, M, K, p[1:], q[1:len(p)])
 
 def mean_error_calculator(N, M, K, pfilename, qfilename):
 

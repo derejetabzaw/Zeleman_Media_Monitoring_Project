@@ -66,8 +66,8 @@ Dir.chdir(TMP_DIR) do
 
 
 
-    FileUtils.rm_rf("#{TMP_DIR}/.", secure: true)
-    FileUtils.rm_rf("#{TILES_DIR}/.", secure: true)
+    # FileUtils.rm_rf("#{TMP_DIR}/.", secure: true)
+    # FileUtils.rm_rf("#{TILES_DIR}/.", secure: true)
     
 
   end

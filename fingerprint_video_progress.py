@@ -25,6 +25,7 @@ import sqed
 from shutil import copy
 import glob
 from converter import load_tester
+import main_menu
 
 
 try:
@@ -51,11 +52,15 @@ class Ui_MainWindow(object):
         MainWindow.resize(795, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        # self.pushButton = QtGui.QPushButton(self.centralwidget)
+        self.pushButton = QtGui.QPushButton(self.centralwidget)
         
-        # self.pushButton.setGeometry(QtCore.QRect(690, 530, 100, 30))
+        self.pushButton.setGeometry(QtCore.QRect(690, 530, 100, 30))
+        
+        self.details_push = QtGui.QPushButton(self.centralwidget)
+        
+        self.details_push.setGeometry(QtCore.QRect(600, 255, 80, 20))
 
-        # self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.details_push.setObjectName(_fromUtf8("details_push"))
         self.layoutWidget = QtGui.QWidget(self.centralwidget)
         self.layoutWidget.setGeometry(QtCore.QRect(120, 225, 600, 50))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
@@ -80,26 +85,42 @@ class Ui_MainWindow(object):
 
        
         self.progressBar.setRange(0,100)
-        self.myLongTask = TaskThread(database = database, Client = Client ,Commercial = Commercial, Commercial_Length = Commercial_Length,Ad = Ad)
+        self.myLongTask = TaskThread(MainWindow = MainWindow ,database = database, Client = Client ,Commercial = Commercial, Commercial_Length = Commercial_Length,Ad = Ad)
         self.myLongTask.start()
         
 
         self.myLongTask.valueChanged.connect(self.progressBar.setValue)
         self.myLongTask.taskFinished.connect(self.progressBar.setValue)
-        #self.myLongTask.taskFinished.connect(self.pushButton.setEnabled)
-        
+        #self.myLongTask.taskFinished.connect(self.details_push.setEnabled)
+        self.myLongTask.taskFinished.connect(self.pushButton.setEnabled)
+
 
         self.myLongTask.connect(self.myLongTask, QtCore.SIGNAL('labeltext(QString)'), self.label.setText)
-        #self.pushButton.clicked.connect(lambda x: self.next_button(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream))
+        #self.details_push.clicked.connect(lambda x: self.next_button(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream))
+        
+        self.pushButton.clicked.connect(lambda x: self.done_button(MainWindow))
+        
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("Media Monitoring Program", "Media Monitoring Program", None))
-        # self.pushButton.setText(_translate("MainWindow", "Next", None))
-        # self.pushButton.setEnabled(False)
+        self.details_push.setText(_translate("MainWindow", "Details", None))
+        self.details_push.setEnabled(True)
+        self.pushButton.setEnabled(False)
+
+        self.pushButton.setText(_translate("MainWindow", "Main Menu", None))
+        
         self.label.setText(_translate("MainWindow", "This may take few minutes...", None))
+
+    
+    def done_button(self,MainWindow):
+
+        main_menu_ui = main_menu.Ui_MainWindow()
+        main_menu_ui.setupUi(MainWindow)
+        MainWindow.show()
+
 
     # def next_button(self,MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream):
     #     broadcast_information, additional_information = sqd.matching(str(os.path.join(os.getcwd(),'output'))) 
@@ -114,13 +135,14 @@ class TaskThread(QThread):
     taskFinished = QtCore.pyqtSignal(int,bool)
     valueChanged = QtCore.pyqtSignal(int)
     
-    def __init__(self,database,Client,Commercial,Commercial_Length,Ad):
+    def __init__(self,MainWindow,database,Client,Commercial,Commercial_Length,Ad):
         super(QThread, self).__init__()
         self.Client = Client
         self.Commercial = Commercial
         self.Commercial_Length = Commercial_Length
         self.Ad = Ad
         self.database = database
+        self.MainWindow = MainWindow
 
 
     def run(self):
@@ -129,6 +151,7 @@ class TaskThread(QThread):
         Commercial_Length = self.Commercial_Length 
         Ad = self.Ad
         database = self.database
+        MainWindow = self.MainWindow
         sleep(1)
 
 
@@ -141,13 +164,22 @@ class TaskThread(QThread):
         progressBar_index = 0
         files = glob.glob(os.getcwd() + "/fingerprints/" + str('*'))
         Commercials_to_fingerprint = Commercial_Length
-        print Commercials_to_fingerprint
+        
+
+
 
         for file_index in range(Commercials_to_fingerprint):
-            if path.exists(os.getcwd() + "/jsons/" + str(Commercial[file_index] + ".json")):
-                print (str(Commercial[i] + ".json") + str(" Fingerprint Already Exists, Do you want to overwrite?"))
-                self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Fingerprint Already Exists, Do you want to overwrite?"))
-                break
+            while path.exists(os.getcwd() + "/jsons/" + str(Commercial[file_index] + ".json")):
+                #print (str(Commercial[i] + ".json") + str(" Fingerprint Already Exists, Do you want to overwrite?"))
+                reply = QtGui.QMessageBox.question(MainWindow, 'Message',"Fingerprint Already Exists, Do you want to overwrite?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.Yes:
+                    os.remove(os.getcwd() + "/jsons/" + str(Commercial[file_index] + ".json"))
+                    create_fingerprint_database.delete_video_information_from_database_by_commercial(database,Commercial[file_index])
+                    continue 
+                else:
+
+                #self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Fingerprint Already Exists, Do you want to overwrite?"))
+                    break
             
             else:
                 self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Processing files..."))

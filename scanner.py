@@ -21,6 +21,7 @@ from os import path
 import time_converter
 import datetime 
 from ethiopian_date import EthiopianDateConverter
+import fingerprint
 
 if not os.path.exists("cropped_threshold"):
     os.makedirs("cropped_threshold")
@@ -271,22 +272,50 @@ class Ui_MainWindow(object):
 
     def search_button(self,MainWindow,database,Commercial,Stream):
     	fingerprint_information = []
-        for i in range(self.count + 1):
-            if path.exists(os.getcwd() + "/jsons/" + str(Commercial[i] + ".json")) is False:
-                print (str(Commercial[i] + ".json") + str(" Fingerprint doesn't exists, Do you want to fingerprint it?"))
-                break 
+        Commercials = []
+        Commercial_Length = (self.count + 1)
+        commercial_ad_time = []
+        commercial_fingerprints = []
+        commercial_ad_time_seconds = []
+        
+        
+        if (self.count == 0) and (self.Commercial_Text_Edit.text() ==""):
+            all_commercials_from_database = create_fingerprint_database.select_all_commercial_video_information_from_database(database)
+            for x in range(len(all_commercials_from_database)):
+                Commercials.append(all_commercials_from_database[x][0])
+                commercial_ad_time.append(all_commercials_from_database[x][1])
+                commercial_fingerprints.append(all_commercials_from_database[x][2])
+                commercial_ad_time_seconds.append(time_converter.time_converter(commercial_ad_time[x])) 
+           
+            '''Take the smallest ad second'''
+            commercial_ad_time_seconds = commercial_ad_time_seconds.sort()
+            Commercial_Length = len(Commercials)
+            Ad_seconds = commercial_ad_time
+            # search_page_ui = search_page.Ui_MainWindow()
+            # search_page_ui.setupUi(MainWindow,database,Stream,Commercials,commercial_ad_time_seconds,commercial_fingerprints,Commercial_Length)
 
-            else:
-                fingerprint_information.append(create_fingerprint_database.select_video_information_from_database_by_commercial(
-                    database,
-                    Commercial[i]))
+        else:
+            for i in range(self.count + 1):
+                if path.exists(os.getcwd() + "/jsons/" + str(Commercial[i] + ".json")) is False:
+                    reply = QtGui.QMessageBox.question(MainWindow, 'Message',"Fingerprint Doesn't Exists, Do you want to fingerprint it?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
+                    if reply == QtGui.QMessageBox.Yes:
+                        fingerprint_page_ui = fingerprint.Ui_MainWindow()
+                        fingerprint_page_ui.setupUi(MainWindow)
+                        continue  
+                    else:
+                        break 
+                else:
+                    fingerprint_information.append(create_fingerprint_database.select_video_information_from_database_by_commercial(
+                        database,
+                        Commercial[i]))
+                    
+                    #commercial_client = fingerprint_information[i][0][0]
+                    #commercial_ad_directory = fingerprint_information[i][0][1]
+                    Commercials.append(Commercial[i])
+                    commercial_ad_time.append(fingerprint_information[i][0][2])
+                    commercial_fingerprints.append(fingerprint_information[i][0][3])
                 
-                #commercial_client = fingerprint_information[i][0][0]
-                #commercial_ad_directory = fingerprint_information[i][0][1]
-                commercial_ad_time = fingerprint_information[i][0][2]
-                commercial_fingerprint = fingerprint_information[i][0][3]
-            
-                commercial_ad_time_seconds = time_converter.time_converter(commercial_ad_time)
+                    commercial_ad_time_seconds.append(time_converter.time_converter(commercial_ad_time[i]))
                 """Scanning Should have three options 
                 EASY/QUICK 
                 
@@ -295,40 +324,9 @@ class Ui_MainWindow(object):
                 Advanced(DEEP)"""
                 
                 """Advanced"""
-                search_page_ui = search_page.Ui_MainWindow()
-                search_page_ui.setupUi(MainWindow,Commercial,Stream,commercial_ad_time_seconds,commercial_fingerprint)
+        search_page_ui = search_page.Ui_MainWindow()
+        search_page_ui.setupUi(MainWindow,database,Stream,Commercials,commercial_ad_time_seconds,commercial_fingerprints,Commercial_Length)
 
-
-
-
-
-                #split.video_threshold_scene_detector(Stream,commercial_ad_time_seconds)
-                #split.video_content_scene_detector()
-                #fingerprint_script = "ruby dupe_2.rb"
-                #os.system(fingerprint_script)
-
-
-                """Json file of a fingerprinted file"""
-                
-                # directory = (os.getcwd() + str("/")+str("cropped_content")).replace("\\","/")
-                # contentfingerprint = []
-                # for filename in os.listdir(directory):
-                #     if filename.endswith(".json"):
-                #         contentfingerprint.append(str(directory) + str("/") +str(filename))
-                
-                
-
-                # upper_bound = 0.1
-                # match_json = []
-                # for i in range(len(contentfingerprint)):
-                #     squared_mean_error = sqed.mean_error_calculator(4,2,100,str(commercial_fingerprint.replace("\\","/")),str(contentfingerprint[i]))
-                #     if (0 < squared_mean_error < upper_bound):
-                #         match_json.append(contentfingerprint[i])
-                #         print str(commercial_fingerprint) + str("Was Broadcasted")
-                #         print (commercial_fingerprint,match_json,squared_mean_error)
-                        
-                #     else:
-                #         print str(commercial_fingerprint) + "Couldn't Find the video you are looking for"
         MainWindow.show()
     def back_button(self,MainWindow):
         main_menu_ui = main_menu.Ui_MainWindow()

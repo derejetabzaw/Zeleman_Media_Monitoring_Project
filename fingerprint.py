@@ -35,8 +35,7 @@ if not os.path.exists("jsons"):
 
 
 
-# with open("dejavu.cnf.SAMPLE") as f:
-#     config = json.load(f)
+
 
 database = str(os.getcwd() + "/" + str("fingerprint_database.db")).replace("\\","/")
 create_fingerprint_database.create_database_and_tables(database)
@@ -281,7 +280,7 @@ class Ui_MainWindow(object):
        
 
 
-        self.fingerprint.clicked.connect(lambda x: self.fingerprint_button(MainWindow,str(self.TV_Station.currentText()),
+        self.fingerprint.clicked.connect(lambda x: self.fingerprint_button(MainWindow,str(self.Tv_Station_Choice.currentText()),
             [str(self.Agent_Choice.currentText()),str(self.Agent_Choice_2.currentText()),str(self.Agent_Choice_3.currentText()),str(self.Agent_Choice_4.currentText())],
             [str(self.Commercial_Choice.currentText()),str(self.Commercial_Choice_2.currentText()),str(self.Commercial_Choice_3.currentText()),str(self.Commercial_Choice_4.currentText())],
             [str(self.Ad_Text_Edit.text()),str(self.Ad_Text_Edit_2.text()),str(self.Ad_Text_Edit_3.text()),str(self.Ad_Text_Edit_4.text())]))

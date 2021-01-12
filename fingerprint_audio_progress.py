@@ -26,6 +26,7 @@ from shutil import copy
 import glob
 from converter import load_tester
 import audio_comparison as ac
+import main_menu
 
 
 try:
@@ -52,9 +53,9 @@ class Ui_MainWindow(object):
         MainWindow.resize(795, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        # self.pushButton = QtGui.QPushButton(self.centralwidget)
+        self.pushButton = QtGui.QPushButton(self.centralwidget)
         
-        # self.pushButton.setGeometry(QtCore.QRect(690, 530, 100, 30))
+        self.pushButton.setGeometry(QtCore.QRect(690, 530, 100, 30))
 
         # self.pushButton.setObjectName(_fromUtf8("pushButton"))
         self.layoutWidget = QtGui.QWidget(self.centralwidget)
@@ -87,29 +88,27 @@ class Ui_MainWindow(object):
 
         self.myLongTask.valueChanged.connect(self.progressBar.setValue)
         self.myLongTask.taskFinished.connect(self.progressBar.setValue)
-        #self.myLongTask.taskFinished.connect(self.pushButton.setEnabled)
+
+        self.myLongTask.taskFinished.connect(self.pushButton.setEnabled)
         
 
         self.myLongTask.connect(self.myLongTask, QtCore.SIGNAL('labeltext(QString)'), self.label.setText)
-        #self.pushButton.clicked.connect(lambda x: self.next_button(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream))
+        self.pushButton.clicked.connect(lambda x: self.done_button(MainWindow))
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("Media Monitoring Program", "Media Monitoring Program", None))
-        # self.pushButton.setText(_translate("MainWindow", "Next", None))
-        # self.pushButton.setEnabled(False)
+        self.pushButton.setText(_translate("MainWindow", "Main Menu", None))
+        self.pushButton.setEnabled(False)
         self.label.setText(_translate("MainWindow", "This may take few minutes...", None))
 
-    # def next_button(self,MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream):
-    #     broadcast_information, additional_information = sqd.matching(str(os.path.join(os.getcwd(),'output'))) 
-    #     print broadcast_information
-    #     Ad_dur = get_sec(getLength(str(Ad))[0:8])
-    #     Time_in_video = Ad_dur * (int(additional_information[1]) - 1)
-    #     result_viewer_page_ui = result_viewer_page.Ui_MainWindow()
-    #     result_viewer_page_ui.setupUi(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream,broadcast_information,Ad_dur,Time_in_video)
-    #     MainWindow.show()
+    def done_button(self,MainWindow):
+
+        main_menu_ui = main_menu.Ui_MainWindow()
+        main_menu_ui.setupUi(MainWindow)
+        MainWindow.show()
 
 class TaskThread(QThread):
     taskFinished = QtCore.pyqtSignal(int,bool)

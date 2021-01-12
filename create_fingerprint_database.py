@@ -230,6 +230,26 @@ def select_video_information_from_database_by_commercial(database,Commercial):
     rows = cur.fetchall()
     return rows 
 
+def select_all_commercial_video_information_from_database(database):
+    """
+    Query information by Commercial
+    :param conn: The Connection Object 
+    :param Commercial: 
+    :return:
+    """
+    conn = create_connection(database)
+    cur = conn.cursor()
+    cur.execute("SELECT DISTINCT Commercial,Ad_Duration,fingerprint_json FROM video_fingerprint_information")
+    #cur.execute("SELECT * FROM video_fingerprint_information")
+
+    rows = cur.fetchall()
+    return rows 
+
+
+
+
+
+
 
 
 def select_audio_information_from_database_by_commercial(database,Commercial):
@@ -270,6 +290,13 @@ def select_audio_broadcast_information_from_database_by_commercial(database,Comm
 #     conn = create_connection(database)
 #     cur = conn.cursor()
 #     cur.execute("DELETE FROM video_fingerprint_information WHERE rowid NOT IN (SELECT max(rowid) FROM video_fingerprint_information);")
+
+def delete_video_information_from_database_by_commercial(database,Commercial):
+    conn = create_connection(database)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM video_fingerprint_information WHERE Commercial=?",(Commercial,))
+
+
 
 
 # def delete_audio_information_from_database(database):

@@ -38,8 +38,10 @@ def main():
                     g = G(data, x, y)
                     ra = vector2ra(g)
                     ras.append( ra )
-        
-            c = sum(map(lambda x: x.r*x.a, ras)) / sum(map(lambda x: x.r, ras)) #6
+            try:
+                c = sum(map(lambda x: x.r*x.a, ras)) / sum(map(lambda x: x.r, ras)) #6
+            except ZeroDivisionError:
+                break 
             result.append( c )
         print json.dumps(result)
 if __name__ == "__main__":

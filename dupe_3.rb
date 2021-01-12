@@ -9,7 +9,7 @@ include FileUtils
 
 TEST_FRAMES = 100
 START_TIME = "00:00:20"
-SEARCH_DIR = File.expand_path("cropped_threshold/")
+SEARCH_DIR = File.expand_path("cropped_content/")
 TMP_DIR = File.expand_path("tmp/")
 TILES_DIR = File.expand_path("tiles/")
 
