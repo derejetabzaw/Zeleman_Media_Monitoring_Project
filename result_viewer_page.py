@@ -85,20 +85,27 @@ class Ui_MainWindow(object):
             Total_Seconds_Broadcasted[i].setText(_translate("MainWindow", "Total Broadcasted Seconds: " + str(Ad_dur[i]), None))
             Total_Seconds_Broadcasted[i].setGeometry(QtCore.QRect(50, 70, 150, 100))
 
+            
+            watch_in_time_video.append(QtGui.QPushButton())
+            watch_in_time_video[i].setText(_translate("MainWindow", "Watch in Time", None))
+            watch_in_time_video[i].setGeometry(QtCore.QRect(50,140, 100, 30))
+            watch_in_time_video[i].clicked.connect(lambda i=i: self.watch_in_time_button(str(Time_in_video[i]),str(Stream)))
+
+
+
+
             Broadcast_Status.append(QtGui.QLabel())
             
             Broadcast_Status[i].setText(_translate("MainWindow", "Broadcast-Status: " + str(broadcast_information[i]), None))
             if (broadcast_information[i] == "Yes"):
                 Broadcast_Status[i].setStyleSheet("background-color : #1900dd")
+
             else:
+                watch_in_time_video[i].setEnabled(False)
                 Broadcast_Status[i].setStyleSheet("background-color : #ee001b")
             Broadcast_Status[i].setGeometry(QtCore.QRect(50, 70, 150, 100))
             
 
-            watch_in_time_video.append(QtGui.QPushButton())
-            watch_in_time_video[i].setText(_translate("MainWindow", "Watch in Time", None))
-            watch_in_time_video[i].setGeometry(QtCore.QRect(50,140, 100, 30))
-            watch_in_time_video[i].clicked.connect(lambda x: self.watch_in_time_button(str(Time_in_video),str(Stream)))
 
 
             groupBoxLayout[i].addWidget(Agent[i])
@@ -110,7 +117,7 @@ class Ui_MainWindow(object):
             grid.addWidget(groupBox[i],i,0)
         horizontal_widget_size = int(Commercial_Length + 1)
         grid.addWidget(groupBox_horizontal,horizontal_widget_size,0,5,2)
-            
+        print  "commands:" + str(watch_in_time_video)
         
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)

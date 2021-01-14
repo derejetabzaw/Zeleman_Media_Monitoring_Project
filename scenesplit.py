@@ -11,6 +11,5 @@ def video_content_scene_detector(ad_length):
 	directory_threshold = (os.getcwd() + str("/")+str("cropped_threshold")).replace("\\","/")
 	for filename in os.listdir(directory_threshold):
 	    if filename.endswith(".mp4"): 
-	    	scenedetect_content_script = "scenedetect -i " + str((directory_threshold + str("/") + filename).replace("\\","/")) + " -o cropped_content detect-content -m " + str(ad_length) + "s" +  " split-video"
-	    	#print scenedetect_content_script
+	    	scenedetect_content_script = "scenedetect -i " + str((directory_threshold + str("/") + filename).replace("\\","/")) + " -o cropped_content detect-content -m " + str(ad_length) + "s" +  " split-video" + " list-scenes"
 	    	os.system(scenedetect_content_script)

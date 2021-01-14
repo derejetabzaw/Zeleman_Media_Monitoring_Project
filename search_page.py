@@ -6,7 +6,6 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from proprocess import get_sec,getLength,trimmer,crop 
@@ -26,9 +25,10 @@ import sqed
 from shutil import copy
 import datetime 
 from ethiopian_date import EthiopianDateConverter
+import append_csv as acsv
 conv = EthiopianDateConverter.to_ethiopian
 
-
+import time 
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -50,7 +50,7 @@ if not os.path.exists("cropped"):
 
 class Ui_MainWindow(object):
     #def setupUi(self,MainWindow,Commercial,Stream,Ad_seconds,fingerprint):
-    def setupUi(self,MainWindow,database,Stream,Commercial,Ad_seconds,fingerprint,Commercial_Length):
+    def setupUi(self,MainWindow,database,Stream,Commercial,Ad_seconds,fingerprint,Commercial_Length,start_time):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(795, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
 
        
         self.progressBar.setRange(0,100)
-        self.myLongTask = TaskThread(MainWindow = MainWindow,database = database,Stream = Stream,Commercial = Commercial,Ad_seconds = Ad_seconds,fingerprint = fingerprint,Commercial_Length = Commercial_Length)
+        self.myLongTask = TaskThread(MainWindow = MainWindow,database = database,Stream = Stream,Commercial = Commercial,Ad_seconds = Ad_seconds,fingerprint = fingerprint,Commercial_Length = Commercial_Length, start_time = start_time)
         self.myLongTask.start()
         
 
@@ -119,19 +119,26 @@ class Ui_MainWindow(object):
         Eth_date = Eth_date.replace('/',',')
         Eth_date = [int(i) for i in Eth_date.split(',')]
         Ethiopian_date = str(Eth_date[1]) + str(',') + str(Eth_date[2]) + str(',') + str(Eth_date[0])
-        Time = "12:51"
+        
+        now = datetime.datetime.now()
+        Time = now.strftime("%H:%M:%S")
         Station = "EBC"
         Stream_Duartion = int(get_sec(getLength(Stream)))
 
         
         # Ad_dur = get_sec(getLength(str(Ad))[0:8])
         # Time_in_video = Ad_dur * (int(additional_information[1]) - 1)
-        Time_in_video = "4:34" 
+        # Time_in_video = "4:34" 
         print (all_clients)
         print (all_ad)
         print (Commercial)
-        print all_ad_lengths
+        print (all_ad_lengths)
+        print (commercial_ad_time_seconds)
         print (Commercial_Length)
+        print (Broadcast_information)
+        print (match_json)
+        print (scene_index)
+        print (Time_in_video)
         result_viewer_page_ui = result_viewer_page.Ui_MainWindow()
         result_viewer_page_ui.setupUi(MainWindow,Date,Eth_date,Time,all_clients,Commercial,Commercial_Length,Station,all_ad,Stream,Broadcast_information,all_ad_lengths,Time_in_video)
         MainWindow.show()
@@ -140,7 +147,7 @@ class TaskThread(QThread):
     taskFinished = QtCore.pyqtSignal(int,bool)
     valueChanged = QtCore.pyqtSignal(int)
     
-    def __init__(self,MainWindow,database,Stream,Commercial,Ad_seconds,fingerprint,Commercial_Length):
+    def __init__(self,MainWindow,database,Stream,Commercial,Ad_seconds,fingerprint,Commercial_Length,start_time):
         super(QThread, self).__init__()
         self.MainWindow  = MainWindow
         self.database = database
@@ -149,6 +156,7 @@ class TaskThread(QThread):
         self.Ad_seconds = Ad_seconds
         self.fingerprint = fingerprint
         self.Commercial_Length = Commercial_Length
+        self.start_time = start_time
 
 
     def run(self):
@@ -162,6 +170,11 @@ class TaskThread(QThread):
         global all_clients
         global all_ad
         global Stream
+        global match_json
+        global directory
+        global Time_in_video
+        global commercial_ad_time_seconds
+
         MainWindow = self.MainWindow
         database = self.database
         Stream = self.Stream
@@ -169,27 +182,27 @@ class TaskThread(QThread):
         Ad_seconds = self.Ad_seconds 
         fingerprint = self.fingerprint
         Commercial_Length = self.Commercial_Length
+        
+        start_time = self.start_time
 
         commercial_ad_time_seconds = self.Ad_seconds  
         commercial_fingerprint = self.fingerprint  
-
         sleep(3)
 
-        upper_bound = 0.15
+        upper_bound = 0.12
         threshold_seconds = 60
         match_json = []
-        Broadcast_information = []
         
         
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Preparing"))
         
         
         for image_files in os.listdir("tiles"):
-            if image_files.lower().endswith((".png",".jpeg")):
+            if image_files.lower().endswith((".png",".jpeg",".jpg")):
                 os.remove(os.getcwd() + "/tiles/" + image_files) 
               
         for image_files in os.listdir("tmp"):
-            if image_files.lower().endswith((".png",".jpeg")):
+            if image_files.lower().endswith((".png",".jpeg",".jpg")):
                 os.remove(os.getcwd() + "/tmp/" + image_files) 
 
 
@@ -206,7 +219,7 @@ class TaskThread(QThread):
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Detecting Threshold for " + str(Stream) ))
         # split.video_threshold_scene_detector(Stream,threshold_seconds)
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Detecting Content..."))
-        directory = (os.getcwd() + str("/")+str("cropped_content")).replace("\\","/")
+        directory = (os.getcwd() + str("/")+str("cropped_content/")).replace("\\","/")
         contentfingerprint = []
         fingerprint_script = "ruby dupe_3.rb"  
         all_commercials = []
@@ -217,7 +230,10 @@ class TaskThread(QThread):
         
         scene_index = []
 
+        Broadcast_information = ["No"] * Commercial_Length
+        Time_in_video = [0] * Commercial_Length
         
+
         
         '''Comparing Fingerprints'''
         for file_index in range(Commercial_Length):
@@ -257,20 +273,20 @@ class TaskThread(QThread):
             
             for i in range(len(contentfingerprint)):
                 squared_mean_error = sqed.mean_error_calculator(4,2,100,str(commercial_fingerprint[file_index].replace("\\","/")),str(contentfingerprint[i]))
-
                 if (0.01 < squared_mean_error < upper_bound):
                     match_json.append(contentfingerprint[i])
-                    Broadcast_information.append(str("Yes"))
-                    scene_index.append(i)            
+                    scene_index.append(i) 
+                    Broadcast_information[file_index] = "Yes"           
+                    Time_in_video[file_index] = (str(acsv.normlaized_timestamps(directory)[0][i]))
                     break
-                # else:
-                #     Broadcast_information = str("No")
             
+
 
         for i in range(85,99,2):
             self.valueChanged.emit(i)
-            # sleep(3) 
+            sleep(3) 
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Done"))
+        print("--- %s seconds ---" % (time.time() - start_time))
         self.taskFinished.emit(100,True)  
         
 

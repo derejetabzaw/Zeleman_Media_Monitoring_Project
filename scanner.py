@@ -23,6 +23,10 @@ import datetime
 from ethiopian_date import EthiopianDateConverter
 import fingerprint
 
+'''Timer --- Will Be removed later '''
+import time 
+start_time = time.time()
+
 if not os.path.exists("cropped_threshold"):
     os.makedirs("cropped_threshold")
 if not os.path.exists("cropped_content"):
@@ -144,7 +148,11 @@ class Ui_MainWindow(object):
         self.search.setGeometry(QtCore.QRect(600,510,100,25))
         self.search.setText("Search")
         self.search.clicked.connect(lambda x: self.search_button(MainWindow,database,
-        	[str(self.Commercial_Text_Edit.text()),str(self.Commercial_Text_Edit_1.text()),str(self.Commercial_Text_Edit_2.text()),str(self.Commercial_Text_Edit_3.text())],str(self.upload_stream_Text_Edit.text())))
+        	[str(self.Commercial_Text_Edit.text()),
+            str(self.Commercial_Text_Edit_1.text()),
+            str(self.Commercial_Text_Edit_2.text()),
+            str(self.Commercial_Text_Edit_3.text())],
+            str(self.upload_stream_Text_Edit.text())))
         
         self.back.clicked.connect(lambda x: self.back_button(MainWindow))
         self.audio_back.clicked.connect(lambda x: self.back_button(MainWindow))
@@ -286,9 +294,8 @@ class Ui_MainWindow(object):
                 commercial_ad_time.append(all_commercials_from_database[x][1])
                 commercial_fingerprints.append(all_commercials_from_database[x][2])
                 commercial_ad_time_seconds.append(time_converter.time_converter(commercial_ad_time[x])) 
-           
             '''Take the smallest ad second'''
-            commercial_ad_time_seconds = commercial_ad_time_seconds.sort()
+            commercial_ad_time_seconds.sort()
             Commercial_Length = len(Commercials)
             Ad_seconds = commercial_ad_time
             # search_page_ui = search_page.Ui_MainWindow()
@@ -325,7 +332,7 @@ class Ui_MainWindow(object):
                 
                 """Advanced"""
         search_page_ui = search_page.Ui_MainWindow()
-        search_page_ui.setupUi(MainWindow,database,Stream,Commercials,commercial_ad_time_seconds,commercial_fingerprints,Commercial_Length)
+        search_page_ui.setupUi(MainWindow,database,Stream,Station,Commercials,commercial_ad_time_seconds,commercial_fingerprints,Commercial_Length,start_time)
 
         MainWindow.show()
     def back_button(self,MainWindow):
