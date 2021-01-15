@@ -50,7 +50,7 @@ if not os.path.exists("cropped"):
 
 class Ui_MainWindow(object):
     #def setupUi(self,MainWindow,Commercial,Stream,Ad_seconds,fingerprint):
-    def setupUi(self,MainWindow,database,Stream,Commercial,Ad_seconds,fingerprint,Commercial_Length,start_time):
+    def setupUi(self,MainWindow,database,Stream,Station,Commercial,Ad_seconds,fingerprint,Commercial_Length,start_time):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(795, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)

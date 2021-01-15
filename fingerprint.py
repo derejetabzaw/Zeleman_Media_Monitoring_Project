@@ -90,9 +90,7 @@ class Ui_MainWindow(object):
         self.Ad_label.setGeometry(QtCore.QRect(10, 110, 100, 20))
         self.Ad_label.setText("TV Ad")
 
-        self.TV_Stations = QtGui.QLabel(self.Video)
-        self.TV_Stations.setGeometry(QtCore.QRect(10, 20, 100, 20))
-        self.TV_Stations.setText("TV Station")
+        
         
         
         self.Client_Text_Edit = QtGui.QLineEdit(self.Video)
@@ -111,14 +109,8 @@ class Ui_MainWindow(object):
         self.Ad_Text_Edit = QtGui.QLineEdit(self.Video)
         self.Ad_Text_Edit.setGeometry(QtCore.QRect(80,110,500,20))
 
-        self.Tv_Station_Choice = QtGui.QComboBox(self.Video)
-        self.Tv_Station_Choice.setGeometry(QtCore.QRect(80,20,150,20))
         
 
-        self.Tv_Station_Add_Choice = QtGui.QPushButton(self.Video)
-        self.Tv_Station_Add_Choice.setGeometry(QtCore.QRect(240,17,75,25))
-        self.Tv_Station_Add_Choice.setText("Add")
-        self.Tv_Station_Add_Choice.clicked.connect(lambda x: self.add_tv_station(MainWindow))
         
         self.Agent_Add_Choice = QtGui.QPushButton(self.Video)
         self.Agent_Add_Choice.setGeometry(QtCore.QRect(240,47,75,25))
@@ -135,7 +127,6 @@ class Ui_MainWindow(object):
         self.Agent_Choice.currentIndexChanged.connect(self.selectionchanged)
         self.Agent_Choice.addItems(["Zeleman", "Cactus", "Spotlight","Berry","251"])
 
-        self.Tv_Station_Choice.addItems(["EBC","EBS","FANA","ARTS","WALTA"])
 
 
         self.browse = QtGui.QPushButton(self.Video)
@@ -328,9 +319,7 @@ class Ui_MainWindow(object):
         self.audio_Ad_label.setText("Radio Ad")
 
         
-        self.Radio_Stations = QtGui.QLabel(self.Audio)
-        self.Radio_Stations.setGeometry(QtCore.QRect(10, 20, 100, 20))
-        self.Radio_Stations.setText("Radio Station")
+        
         
         
         self.audio_Client_Text_Edit = QtGui.QLineEdit(self.Audio)
@@ -351,15 +340,9 @@ class Ui_MainWindow(object):
         self.audio_Ad_Text_Edit = QtGui.QLineEdit(self.Audio)
         self.audio_Ad_Text_Edit.setGeometry(QtCore.QRect(80,110,500,20))
 
-        self.Radio_Station_Choice = QtGui.QComboBox(self.Audio)
-        self.Radio_Station_Choice.setGeometry(QtCore.QRect(80,20,150,20))
+        
 
-
-        self.Radio_Station_Add_Choice = QtGui.QPushButton(self.Audio)
-        self.Radio_Station_Add_Choice.setGeometry(QtCore.QRect(240,17,75,25))
-        self.Radio_Station_Add_Choice.setText("Add")
-        self.Radio_Station_Add_Choice.clicked.connect(lambda x: self.add_radio_station(MainWindow))
-
+        
         
         self.radio_Agent_Add_Choice = QtGui.QPushButton(self.Audio)
         self.radio_Agent_Add_Choice.setGeometry(QtCore.QRect(240,47,75,25))
@@ -382,7 +365,6 @@ class Ui_MainWindow(object):
         self.radio_Agent_Choice.addItems(["Zeleman", "Cactus", "Spotlight","Berry","251"])
 
 
-        self.Radio_Station_Choice.addItems(["FMADDIS", "SHEGERFM", "AHADU","AFROFM"])
 
 
 
@@ -928,36 +910,9 @@ class Ui_MainWindow(object):
 
 
     '''Add New TV Stations'''
-    def add_tv_station(self,MainWindow):
-        self.dialog_for_tv_station_choice = QtGui.QDialog(self.Video)
-        self.add_option = QtGui.QPushButton("Add",self.dialog_for_tv_station_choice)
-        self.TV_Option_Text_Edit = QtGui.QLineEdit(self.dialog_for_tv_station_choice)
-        self.TV_Option_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
-        self.add_option.move(85,80)
-        self.dialog_for_tv_station_choice.setWindowTitle("Add TV-Station")
-        self.add_option.clicked.connect(lambda x: self.add_options_to_index(MainWindow,str(self.TV_Option_Text_Edit.text())))
-        self.dialog_for_tv_station_choice.exec_()
-    def add_options_to_index(self,MainWindow,new_tv_station):
-        self.Tv_Station_Choice.addItem(new_tv_station)
-        count = self.Tv_Station_Choice.count()
-        self.Tv_Station_Choice.setCurrentIndex(count - 1)
-        self.dialog_for_tv_station_choice.close()
     
     '''Add New Radio Station'''
 
-    def add_radio_station(self,MainWindow):
-        self.dialog_for_radio_station_choice = QtGui.QDialog(self.Audio)
-        self.add_radio_option = QtGui.QPushButton("Add",self.dialog_for_radio_station_choice)
-        self.RADIO_Option_Text_Edit = QtGui.QLineEdit(self.dialog_for_radio_station_choice)
-        self.RADIO_Option_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
-        self.add_radio_option.move(85,80)
-        self.dialog_for_radio_station_choice.setWindowTitle("Add RADIO-Station")
-        self.add_radio_option.clicked.connect(lambda x: self.add_options_to_radio_index(MainWindow,str(self.RADIO_Option_Text_Edit.text())))
-        self.dialog_for_radio_station_choice.exec_()
-    def add_options_to_radio_index(self,MainWindow,new_radio_station):
-        self.Radio_Station_Choice.addItem(new_radio_station)
-        self.Radio_Station_Choice.setItemText(0,new_radio_station)
-        self.dialog_for_radio_station_choice.close()
     
     def browse_ad_additional_button_click(self):
         self.Ad_Text_Edit.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Video" ,default_path,"Video (*.mpg *.flv *.wmv *.mpv *.mp4 *.avi)"))

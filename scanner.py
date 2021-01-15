@@ -78,14 +78,35 @@ class Ui_MainWindow(object):
         self.audio_back = QtGui.QPushButton(self.Audio)
         self.audio_back.setGeometry(QtCore.QRect(500,510,100,25))
         self.audio_back.setText("Back")
+
+
+
+
+        self.TV_Stations = QtGui.QLabel(self.Video)
+        self.TV_Stations.setGeometry(QtCore.QRect(10, 20, 100, 20))
+        self.TV_Stations.setText("TV Station")
         
+        self.Tv_Station_Choice = QtGui.QComboBox(self.Video)
+        self.Tv_Station_Choice.setGeometry(QtCore.QRect(80,20,150,20))
+        
+        self.Tv_Station_Add_Choice = QtGui.QPushButton(self.Video)
+        self.Tv_Station_Add_Choice.setGeometry(QtCore.QRect(240,17,75,25))
+        self.Tv_Station_Add_Choice.setText("Add")
+        self.Tv_Station_Add_Choice.clicked.connect(lambda x: self.add_tv_station(MainWindow))
+        
+    
+        self.Tv_Station_Choice.addItems(["EBC","EBS","FANA","ARTS","WALTA"])
+
+
+
+
         
         self.upload_stream_label = QtGui.QLabel(self.Video)
         self.upload_stream_label.setGeometry(QtCore.QRect(10, 50, 100, 20))
         self.upload_stream_label.setText("TV Stream")
 
         self.upload_stream_Text_Edit = QtGui.QLineEdit(self.Video)
-        self.upload_stream_Text_Edit.setGeometry(QtCore.QRect(85,50,530,20))
+        self.upload_stream_Text_Edit.setGeometry(QtCore.QRect(80,50,530,20))
  
        	self.browse = QtGui.QPushButton(self.Video)
         self.browse.setGeometry(QtCore.QRect(630,50,75,20))
@@ -144,6 +165,8 @@ class Ui_MainWindow(object):
         self.count = 0 
 
 
+
+
         self.search = QtGui.QPushButton(self.Video)
         self.search.setGeometry(QtCore.QRect(600,510,100,25))
         self.search.setText("Search")
@@ -152,7 +175,8 @@ class Ui_MainWindow(object):
             str(self.Commercial_Text_Edit_1.text()),
             str(self.Commercial_Text_Edit_2.text()),
             str(self.Commercial_Text_Edit_3.text())],
-            str(self.upload_stream_Text_Edit.text())))
+            str(self.upload_stream_Text_Edit.text()),
+            str(self.Tv_Station_Choice.currentText())))
         
         self.back.clicked.connect(lambda x: self.back_button(MainWindow))
         self.audio_back.clicked.connect(lambda x: self.back_button(MainWindow))
@@ -188,9 +212,18 @@ class Ui_MainWindow(object):
 
 
 
+        self.Radio_Stations = QtGui.QLabel(self.Audio)
+        self.Radio_Stations.setGeometry(QtCore.QRect(10, 20, 100, 20))
+        self.Radio_Stations.setText("Radio Station")
+        self.Radio_Station_Choice = QtGui.QComboBox(self.Audio)
+        self.Radio_Station_Choice.setGeometry(QtCore.QRect(80,20,150,20))
 
+        self.Radio_Station_Add_Choice = QtGui.QPushButton(self.Audio)
+        self.Radio_Station_Add_Choice.setGeometry(QtCore.QRect(240,17,75,25))
+        self.Radio_Station_Add_Choice.setText("Add")
+        self.Radio_Station_Add_Choice.clicked.connect(lambda x: self.add_radio_station(MainWindow))
 
-
+    
 
 
 
@@ -203,7 +236,7 @@ class Ui_MainWindow(object):
         self.audio_upload_stream_label.setText("Radio Stream")
 
         self.audio_upload_stream_Text_Edit = QtGui.QLineEdit(self.Audio)
-        self.audio_upload_stream_Text_Edit.setGeometry(QtCore.QRect(85,50,530,20))
+        self.audio_upload_stream_Text_Edit.setGeometry(QtCore.QRect(80,50,530,20))
  
         self.audio_browse = QtGui.QPushButton(self.Audio)
         self.audio_browse.setGeometry(QtCore.QRect(630,50,75,20))
@@ -261,6 +294,7 @@ class Ui_MainWindow(object):
         self.audio_add_commercial.clicked.connect(self.audio_more_ad_add)
         self.audio_count = 0 
 
+        self.Radio_Station_Choice.addItems(["FMADDIS", "SHEGERFM", "AHADU","AFROFM"])
 
         self.audio_search = QtGui.QPushButton(self.Audio)
         self.audio_search.setGeometry(QtCore.QRect(600,510,100,25))
@@ -270,21 +304,65 @@ class Ui_MainWindow(object):
             str(self.audio_Commercial_Text_Edit_1.text()),
             str(self.audio_Commercial_Text_Edit_2.text()),
             str(self.audio_Commercial_Text_Edit_3.text())],
-            str(self.audio_upload_stream_Text_Edit.text())))
+            str(self.audio_upload_stream_Text_Edit.text()),
+            str(self.Radio_Station_Choice.currentText())))
         
+    def add_radio_station(self,MainWindow):
+        self.dialog_for_radio_station_choice = QtGui.QDialog(self.Audio)
+        self.add_radio_option = QtGui.QPushButton("Add",self.dialog_for_radio_station_choice)
+        self.RADIO_Option_Text_Edit = QtGui.QLineEdit(self.dialog_for_radio_station_choice)
+        self.RADIO_Option_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_radio_option.move(85,80)
+        self.dialog_for_radio_station_choice.setWindowTitle("Add RADIO-Station")
+        self.add_radio_option.clicked.connect(lambda x: self.add_options_to_radio_index(MainWindow,str(self.RADIO_Option_Text_Edit.text())))
+        self.dialog_for_radio_station_choice.exec_()
+    def add_options_to_radio_index(self,MainWindow,new_radio_station):
+        self.Radio_Station_Choice.addItem(new_radio_station)
+        self.Radio_Station_Choice.setItemText(0,new_radio_station)
+        self.dialog_for_radio_station_choice.close()
+    
+
+
+
+
+
+
+
+
+    def add_tv_station(self,MainWindow):
+        self.dialog_for_tv_station_choice = QtGui.QDialog(self.Video)
+        self.add_option = QtGui.QPushButton("Add",self.dialog_for_tv_station_choice)
+        self.TV_Option_Text_Edit = QtGui.QLineEdit(self.dialog_for_tv_station_choice)
+        self.TV_Option_Text_Edit.setGeometry(QtCore.QRect(50,50,150,20))
+        self.add_option.move(85,80)
+        self.dialog_for_tv_station_choice.setWindowTitle("Add TV-Station")
+        self.add_option.clicked.connect(lambda x: self.add_options_to_index(MainWindow,str(self.TV_Option_Text_Edit.text())))
+        self.dialog_for_tv_station_choice.exec_()
+    def add_options_to_index(self,MainWindow,new_tv_station):
+        self.Tv_Station_Choice.addItem(new_tv_station)
+        count = self.Tv_Station_Choice.count()
+        self.Tv_Station_Choice.setCurrentIndex(count - 1)
+        self.dialog_for_tv_station_choice.close()
+
+
+
+
+
+
 
 
 
     def browse_ad_additional_button_click(self):
         self.upload_stream_Text_Edit.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Video" ,default_path,"Video (*.mpg *.flv *.wmv *.mpv *.mp4 *.avi)"))
 
-    def search_button(self,MainWindow,database,Commercial,Stream):
+    def search_button(self,MainWindow,database,Commercial,Stream,Station):
     	fingerprint_information = []
         Commercials = []
         Commercial_Length = (self.count + 1)
         commercial_ad_time = []
         commercial_fingerprints = []
         commercial_ad_time_seconds = []
+        print Station
         
         
         if (self.count == 0) and (self.Commercial_Text_Edit.text() ==""):
@@ -440,7 +518,7 @@ class Ui_MainWindow(object):
     def audio_browse_ad_additional_button_click(self):
         self.audio_upload_stream_Text_Edit.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Audio" ,default_path,"Audio (*.mp3 *.wma *.wav)"))
 
-    def audio_search_button(self,MainWindow,database,Commercial,Stream):
+    def audio_search_button(self,MainWindow,database,Commercial,Stream,Station):
         Client = []
         Ad = []
         Ad_Duration = []
