@@ -271,7 +271,7 @@ class Ui_MainWindow(object):
        
 
 
-        self.fingerprint.clicked.connect(lambda x: self.fingerprint_button(MainWindow,str(self.Tv_Station_Choice.currentText()),
+        self.fingerprint.clicked.connect(lambda x: self.fingerprint_button(MainWindow,
             [str(self.Agent_Choice.currentText()),str(self.Agent_Choice_2.currentText()),str(self.Agent_Choice_3.currentText()),str(self.Agent_Choice_4.currentText())],
             [str(self.Commercial_Choice.currentText()),str(self.Commercial_Choice_2.currentText()),str(self.Commercial_Choice_3.currentText()),str(self.Commercial_Choice_4.currentText())],
             [str(self.Ad_Text_Edit.text()),str(self.Ad_Text_Edit_2.text()),str(self.Ad_Text_Edit_3.text()),str(self.Ad_Text_Edit_4.text())]))
@@ -508,7 +508,7 @@ class Ui_MainWindow(object):
 
 
 
-        self.audio_fingerprint.clicked.connect(lambda x: self.audio_fingerprint_button(MainWindow,str(self.Radio_Station_Choice.currentText()),
+        self.audio_fingerprint.clicked.connect(lambda x: self.audio_fingerprint_button(MainWindow,
             [str(self.radio_Agent_Choice.currentText()),str(self.radio_Agent_Choice_2.currentText()),str(self.radio_Agent_Choice_3.currentText()),str(self.radio_Agent_Choice_4.currentText())],
             [str(self.radio_Commercial_Choice.currentText()),str(self.radio_Commercial_Choice_2.currentText()),str(self.radio_Commercial_Choice_3.currentText()),str(self.radio_Commercial_Choice_4.currentText())],
             [str(self.audio_Ad_Text_Edit.text()),str(self.audio_Ad_Text_Edit_2.text()),str(self.audio_Ad_Text_Edit_3.text()),str(self.audio_Ad_Text_Edit_4.text())]))
@@ -1124,7 +1124,7 @@ class Ui_MainWindow(object):
         self.remove_2.setDisabled(False)
         self.count = 2
 
-    def fingerprint_button(self,MainWindow,TV_Station,Client,Commercial,Ad):
+    def fingerprint_button(self,MainWindow,Client,Commercial,Ad):
         Commercial_Length = (self.count + 1)
         fingerprint_progress_ui = fvp.Ui_MainWindow()
         fingerprint_progress_ui.setupUi(MainWindow,database,Client,Commercial,Commercial_Length,Ad)
@@ -1359,7 +1359,7 @@ class Ui_MainWindow(object):
         self.audio_remove_2.setDisabled(False)
         self.audio_count = 2
 
-    def audio_fingerprint_button(self,MainWindow,Radio_Station,Client,Commercial,Ad):
+    def audio_fingerprint_button(self,MainWindow,Client,Commercial,Ad):
         Commercial_Length = (self.audio_count + 1)
         audio_fingerprint_progress_ui = fap.Ui_MainWindow()
         audio_fingerprint_progress_ui.setupUi(MainWindow,database,Client,Commercial,Commercial_Length,Ad)

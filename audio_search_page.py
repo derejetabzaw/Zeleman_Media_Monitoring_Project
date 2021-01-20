@@ -51,7 +51,7 @@ conv = EthiopianDateConverter.to_ethiopian
 confidence_tune = 150
 
 class Ui_MainWindow(object):
-    def setupUi(self,MainWindow,Date_of_broadcast,Eth_date,database,Commercial,Stream, Client, Ad, Ad_Duration):
+    def setupUi(self,MainWindow,Date_of_broadcast,Eth_date,database,Commercial,Commercial_Length,Stream, Client, Ad, Ad_Duration):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(795, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -85,7 +85,7 @@ class Ui_MainWindow(object):
 
        
         self.progressBar.setRange(0,100)
-        self.audio_scan_progress_bar = Audio_TaskThread(Stream= Stream ,Ad = Ad, Ad_Duration= Ad_Duration, database = database, Date_of_broadcast = Date_of_broadcast,Eth_date = Eth_date ,Client = Client,Commercial = Commercial)
+        self.audio_scan_progress_bar = Audio_TaskThread(Stream= Stream ,Ad = Ad, Ad_Duration= Ad_Duration, database = database, Date_of_broadcast = Date_of_broadcast,Eth_date = Eth_date ,Client = Client,Commercial = Commercial,Commercial_Length = Commercial_Length)
         self.audio_scan_progress_bar.start()
         self.audio_scan_progress_bar.audio_valueChanged.connect(self.progressBar.setValue)
         self.audio_scan_progress_bar.audio_taskFinished.connect(self.progressBar.setValue)
@@ -115,7 +115,7 @@ class Audio_TaskThread(QThread):
     audio_taskFinished = QtCore.pyqtSignal(int,bool)
     audio_valueChanged = QtCore.pyqtSignal(int) 
 
-    def __init__(self,Stream,Ad,Ad_Duration,database,Date_of_broadcast,Eth_date,Client,Commercial):
+    def __init__(self,Stream,Ad,Ad_Duration,database,Date_of_broadcast,Eth_date,Client,Commercial,Commercial_Length):
         super(QThread, self).__init__()
         self.Stream = Stream
         self.Ad = Ad
@@ -125,6 +125,7 @@ class Audio_TaskThread(QThread):
         self.Eth_date = Eth_date
         self.Client = Client
         self.Commercial = Commercial
+        self.Commercial_Length = Commercial_Length
                 
     def run(self):
         Stream = self.Stream
@@ -135,6 +136,7 @@ class Audio_TaskThread(QThread):
         Eth_date = str(self.Eth_date)
         Client = self.Client
         Commercial = self.Commercial
+        Commercial_Length = self.Commercial_Length
 
         sleep(1)
 
@@ -152,7 +154,14 @@ class Audio_TaskThread(QThread):
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Indexing..." ))
         
         progress_bar_index = 15 
-        for index in range(len(Commercial)- 1):
+        
+        Broadcast_information = ["No"] * Commercial_Length
+        match_time = [0] * Commercial_Length
+
+
+        
+        for index in range(Commercial_Length):
+
             Ad_Duration = tc.time_converter(Ad_Durations[index])
             segment_index = int(round(St_dur / int(Ad_Duration))) + 1
         
@@ -176,36 +185,40 @@ class Audio_TaskThread(QThread):
 
             Stream_duration = St_dur
             songs = ac.audio_compare(indexed_audio)
-            match_time = []
+            # match_time = []
+            print Ad
             for i in range(len(indexed_audio)):
                 if songs[i]['confidence'] > confidence_tune and songs[i]['song_name'] == str(os.path.splitext(os.path.basename(Ad[index]))[0]):
                     print (songs[i]['confidence'])
-                    broadcast_information = str("Yes")
-                    match_time.append(float(songs[i]['match_time']) + float(songs[i]['offset_seconds']))
+                    Broadcast_information[index] = "Yes"
+                    # match_time.append(float(songs[i]['match_time']) + float(songs[i]['offset_seconds']))
+                    match_time[index] = float(songs[i]['match_time']) + float(songs[i]['offset_seconds'])
                     print str(indexed_audio[i]) + " has an Audio Match: " + str(songs[i]['song_name']) + " ,with a confidence of: " + str(songs[i]['confidence']) + " at matchtime: " + str(match_time)
                     break
-                else:
-                    print " Didn't Match "
-                    broadcast_information = str("No")
+                # else:
+                #     print " Didn't Match "
+                #     broadcast_information = str("No")
 
             '''Writing to Database'''
-            self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Recording to Database"))
-            create_fingerprint_database.insert_audio_broadcast_information_to_database(database,str(Date_of_broadcast),str(Eth_date),str(Client[index]),str(Commercial[index]),broadcast_information,str(Ad[index]),str(Ad_Duration),Stream,Stream_duration,str(match_time))
-            for i in range(progress_bar_index,progress_bar_index + 10 ,2):
-                self.audio_valueChanged.emit(i)
-                sleep(0.5)
+            # self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Recording to Database"))
+            # create_fingerprint_database.insert_audio_broadcast_information_to_database(database,str(Date_of_broadcast),str(Eth_date),str(Client[index]),str(Commercial[index]),broadcast_information,str(Ad[index]),str(Ad_Duration),Stream,Stream_duration,str(match_time))
+            # for i in range(progress_bar_index,progress_bar_index + 10 ,2):
+            #     self.audio_valueChanged.emit(i)
+            #     sleep(0.5)
             progress_bar_index += 10 
             for audio_file in os.listdir("audio_cropped"):
                 if audio_file.lower().endswith((".mp3",".wma",".wav")):
                     os.remove(os.getcwd() + "/audio_cropped/" + audio_file)  
 
             progress_bar_index += 2 
+        print Broadcast_information
+        print match_time
         for i in range(progress_bar_index, 99 ,2):
             self.audio_valueChanged.emit(i)
             sleep(0.5)
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Done"))        
         self.audio_taskFinished.emit(100,True)  
-        exit()
+        # exit()
 
 
 

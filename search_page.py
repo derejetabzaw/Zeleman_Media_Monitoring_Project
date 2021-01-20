@@ -95,7 +95,7 @@ class Ui_MainWindow(object):
 
         self.myLongTask.connect(self.myLongTask, QtCore.SIGNAL('labeltext(QString)'), self.label.setText)
         # self.pushButton.clicked.connect(lambda x: self.next_button(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream))
-        self.pushButton.clicked.connect(lambda x: self.next_button(MainWindow))
+        self.pushButton.clicked.connect(lambda x: self.next_button(MainWindow,Station))
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -108,7 +108,7 @@ class Ui_MainWindow(object):
 
     # def next_button(self,MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream):
         
-    def next_button(self,MainWindow):
+    def next_button(self,MainWindow,Station):
         # broadcast_information, additional_information = sqd.matching(str(os.path.join(os.getcwd(),'output'))) 
         # print broadcast_information
         # print match_json,Broadcast_information,scene_index
@@ -122,7 +122,6 @@ class Ui_MainWindow(object):
         
         now = datetime.datetime.now()
         Time = now.strftime("%H:%M:%S")
-        Station = "EBC"
         Stream_Duartion = int(get_sec(getLength(Stream)))
 
         
@@ -160,7 +159,6 @@ class TaskThread(QThread):
 
 
     def run(self):
-        #self.Stream = str(self.Stream)
         global Commercial
         global Commercial_Length
         global match_json
