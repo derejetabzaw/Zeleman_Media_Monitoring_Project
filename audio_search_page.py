@@ -11,6 +11,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from proprocess import get_sec,getLength,trimmer,crop 
 import create_fingerprint_database as cfd
+import result_viewer_page
 from time import sleep
 from shutil import copy
 import subprocess
@@ -51,7 +52,7 @@ conv = EthiopianDateConverter.to_ethiopian
 confidence_tune = 150
 
 class Ui_MainWindow(object):
-    def setupUi(self,MainWindow,Date_of_broadcast,Eth_date,database,Commercial,Commercial_Length,Stream, Client, Ad, Ad_Duration):
+    def setupUi(self,MainWindow,Date_of_broadcast,Eth_date,database,Commercial,Commercial_Length,Station,Stream, Client, Ad, Ad_Duration):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(795, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -95,7 +96,7 @@ class Ui_MainWindow(object):
 
         
         self.audio_scan_progress_bar.connect(self.audio_scan_progress_bar, QtCore.SIGNAL('labeltext(QString)'), self.label.setText)
-        self.pushButton.clicked.connect(lambda x: self.next_button(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream))
+        self.pushButton.clicked.connect(lambda x: self.next_button(MainWindow,Date_of_broadcast,Eth_date,Station))
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -106,10 +107,29 @@ class Ui_MainWindow(object):
         self.pushButton.setEnabled(False)
         self.label.setText(_translate("MainWindow", "This may take few minutes...", None))
 
-    def next_button(self,MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream):
-        result_viewer_page_ui = audio_result_viewer_page.Ui_MainWindow()
-        result_viewer_page_ui.setupUi(MainWindow,Date,Eth_date,Time,Client,Commercial,Station,Ad,Stream,broadcast_information,Ad_dur,Time_in_video)
+
+    def next_button(self,MainWindow,Date,Eth_date,Station):
+        
+        now = datetime.datetime.now()
+        Time = now.strftime("%H:%M:%S")
+        Stream_Duartion = int(get_sec(getLength(Stream)))
+
+        print Date
+        print Eth_date
+        print Time 
+        print Client
+        print Commercial 
+        print Commercial_Length
+        print Station 
+        print Ad 
+        print Stream 
+        print Broadcast_information
+        print Ad_Durations
+        print match_time
+        result_viewer_page_ui = result_viewer_page.Ui_MainWindow()
+        result_viewer_page_ui.setupUi(MainWindow,Date,Eth_date,Time,Client,Commercial,Commercial_Length,Station,Ad,Stream,Broadcast_information,Ad_Durations,match_time)
         MainWindow.show()
+
 
 class Audio_TaskThread(QThread):
     audio_taskFinished = QtCore.pyqtSignal(int,bool)
@@ -128,6 +148,15 @@ class Audio_TaskThread(QThread):
         self.Commercial_Length = Commercial_Length
                 
     def run(self):
+        global Stream
+        global Ad_Durations
+        global Ad 
+        global Client 
+        global Commercial 
+        global Commercial_Length
+        global Broadcast_information
+        global match_time
+        global Ad_Durations
         Stream = self.Stream
         Ad_Durations = self.Ad_Duration
         Ad = self.Ad
@@ -154,50 +183,60 @@ class Audio_TaskThread(QThread):
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Indexing..." ))
         
         progress_bar_index = 15 
+
+        Least_duration = sorted(Ad_Durations)
+
+        Ad_Duration = tc.time_converter(Least_duration[0])
+        segment_index = int(round(St_dur / int(Ad_Duration))) + 1
+
+        '''Trimming'''
+        
+        self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Trimming... "))
+        indexed_audio = []
+        indexed_audio_durations = []
+        audio_marks = [0] * segment_index
+        adder = 0
+        for i in range(segment_index):
+            crop(str(i*int(Ad_Duration)),str(int(Ad_Duration)*(i + 1)),str(self.Stream),str("audio_cropped/audio_crop_" + str(i) + ".mp3"))
+            indexed_audio.append(os.getcwd() + "/audio_cropped/audio_crop_" + str(i) + ".mp3")
+            indexed_audio_durations.append(get_sec(getLength(indexed_audio[i])))
+            audio_marks[i] = adder + indexed_audio_durations[i] 
+            adder += indexed_audio_durations[i]
+
+        
+        songs = ac.audio_compare(indexed_audio)
+
+
+
+
+
+        for i in range(progress_bar_index,progress_bar_index + 10 ,2):
+            self.audio_valueChanged.emit(i)
+            sleep(0.5) 
+        progress_bar_index += 25
+
+
+
         
         Broadcast_information = ["No"] * Commercial_Length
-        match_time = [0] * Commercial_Length
-
-
-        
+        match_time = [0] * Commercial_Length        
         for index in range(Commercial_Length):
-
-            Ad_Duration = tc.time_converter(Ad_Durations[index])
-            segment_index = int(round(St_dur / int(Ad_Duration))) + 1
-        
             for i in range(progress_bar_index,progress_bar_index + 5,2):
                 self.audio_valueChanged.emit(i)
                 sleep(0.5)
             progress_bar_index += 5 
 
-            '''Trimming'''
-            self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Trimming: " + str(Commercial[index])))
-            indexed_audio = []
-            for i in range(segment_index):
-                crop(str(i*int(Ad_Duration)),str(int(Ad_Duration)*(i + 1)),str(self.Stream),str("audio_cropped/audio_crop_" + str(i) + ".mp3"))
-                indexed_audio.append(os.getcwd() + "/audio_cropped/audio_crop_" + str(i) + ".mp3")
-
-            for i in range(progress_bar_index,progress_bar_index + 10 ,2):
-                self.audio_valueChanged.emit(i)
-                sleep(0.5) 
-            progress_bar_index += 10
+            
             self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Finding Match: " + str(Commercial[index])))
 
             Stream_duration = St_dur
-            songs = ac.audio_compare(indexed_audio)
-            # match_time = []
-            print Ad
+
             for i in range(len(indexed_audio)):
                 if songs[i]['confidence'] > confidence_tune and songs[i]['song_name'] == str(os.path.splitext(os.path.basename(Ad[index]))[0]):
-                    print (songs[i]['confidence'])
                     Broadcast_information[index] = "Yes"
-                    # match_time.append(float(songs[i]['match_time']) + float(songs[i]['offset_seconds']))
-                    match_time[index] = float(songs[i]['match_time']) + float(songs[i]['offset_seconds'])
-                    print str(indexed_audio[i]) + " has an Audio Match: " + str(songs[i]['song_name']) + " ,with a confidence of: " + str(songs[i]['confidence']) + " at matchtime: " + str(match_time)
+                    match_time[index] = audio_marks[i]
                     break
-                # else:
-                #     print " Didn't Match "
-                #     broadcast_information = str("No")
+
 
             '''Writing to Database'''
             # self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Recording to Database"))
@@ -206,19 +245,19 @@ class Audio_TaskThread(QThread):
             #     self.audio_valueChanged.emit(i)
             #     sleep(0.5)
             progress_bar_index += 10 
-            for audio_file in os.listdir("audio_cropped"):
+            
+
+            progress_bar_index += 2 
+        
+        for audio_file in os.listdir("audio_cropped"):
                 if audio_file.lower().endswith((".mp3",".wma",".wav")):
                     os.remove(os.getcwd() + "/audio_cropped/" + audio_file)  
 
-            progress_bar_index += 2 
-        print Broadcast_information
-        print match_time
         for i in range(progress_bar_index, 99 ,2):
             self.audio_valueChanged.emit(i)
             sleep(0.5)
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Done"))        
         self.audio_taskFinished.emit(100,True)  
-        # exit()
 
 
 

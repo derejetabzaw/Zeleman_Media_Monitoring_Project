@@ -13,6 +13,7 @@ import os
 import result_card_page
 import browse_page
 #import watch_in_time as wit
+from functools import partial
 program = str("mplayer")
 
 try:
@@ -62,7 +63,6 @@ class Ui_MainWindow(object):
         groupBox_horizontalLayout.addWidget(self.previous)
         groupBox_horizontalLayout.addWidget(self.next)
         
-        
         for i in range (Commercial_Length):
             groupBox.append(QtGui.QGroupBox(self.centralwidget))
             groupBoxLayout.append(QtGui.QVBoxLayout())
@@ -89,9 +89,8 @@ class Ui_MainWindow(object):
             watch_in_time_video.append(QtGui.QPushButton())
             watch_in_time_video[i].setText(_translate("MainWindow", "Watch in Time", None))
             watch_in_time_video[i].setGeometry(QtCore.QRect(50,140, 100, 30))
-            watch_in_time_video[i].clicked.connect(lambda i=i: self.watch_in_time_button(str(Time_in_video[i]),str(Stream)))
-
-
+            watch_in_time_video[i].clicked.connect(lambda x, i=i : self.watch_in_time_button(Time_in_video[i],str(Stream)))
+            
 
 
             Broadcast_Status.append(QtGui.QLabel())
@@ -117,7 +116,6 @@ class Ui_MainWindow(object):
             grid.addWidget(groupBox[i],i,0)
         horizontal_widget_size = int(Commercial_Length + 1)
         grid.addWidget(groupBox_horizontal,horizontal_widget_size,0,5,2)
-        print  "commands:" + str(watch_in_time_video)
         
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
@@ -153,26 +151,3 @@ class Ui_MainWindow(object):
         browse_page_ui = browse_page.Ui_MainWindow()
         browse_page_ui.setupUi(MainWindow,Date,Time,Client,Commercial,Station,Ad,Stream)
         MainWindow.show()
-# if __name__ == "__main__":
-#     import sys
-#     app = QtGui.QApplication(sys.argv)
-#     MainWindow = QtGui.QMainWindow()
-#     ui = Ui_MainWindow()
-#     Date = "12/29/2020"
-#     Eth_Date = "20/04/2013"
-#     Time = "6:57"
-#     Client = ["Zeleman","Spotlight"]
-#     Commercial = ["Scotts","Senq"]
-#     Commercial_Length = 2    
-
-#     Station = "EBC"
-#     Ad = ["../Scotts.mp4","../Senq.mp4"]
-#     Stream = "../EBC-Night.mp4"
-#     broadcast_information = ["No","Yes"]
-#     Ad_dur = ["0.35s","0.29s"]
-#     Time_in_video = "4:34" 
-
-#     ui.setupUi(MainWindow,Date,Eth_Date,Time,Client,Commercial,Commercial_Length,Station,Ad,Stream,broadcast_information,Ad_dur,Time_in_video)
-#     MainWindow.show()
-#     sys.exit(app.exec_())
-

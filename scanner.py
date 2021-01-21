@@ -534,7 +534,7 @@ class Ui_MainWindow(object):
             Client.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][0])
             Ad.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][1])
             Ad_Duration.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][2])
-        audio_search_page_ui.setupUi(MainWindow,Date_of_broadcast,Eth_date,str(database),Commercial,Audio_Commercial_Length,str(Stream), Client, Ad , Ad_Duration)
+        audio_search_page_ui.setupUi(MainWindow,Date_of_broadcast,Eth_date,str(database),Commercial,Audio_Commercial_Length,str(Station),str(Stream), Client, Ad , Ad_Duration)
         MainWindow.show()
         import sys
         sys.exit(app.exec_())
