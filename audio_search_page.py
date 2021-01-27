@@ -86,7 +86,7 @@ class Ui_MainWindow(object):
 
        
         self.progressBar.setRange(0,100)
-        self.audio_scan_progress_bar = Audio_TaskThread(Stream= Stream ,Ad = Ad, Ad_Duration= Ad_Duration, database = database, Date_of_broadcast = Date_of_broadcast,Eth_date = Eth_date ,Client = Client,Commercial = Commercial,Commercial_Length = Commercial_Length)
+        self.audio_scan_progress_bar = Audio_TaskThread(Stream= Stream ,Ad = Ad, Ad_Duration= Ad_Duration, database = database, Station = Station, Date_of_broadcast = Date_of_broadcast,Eth_date = Eth_date ,Client = Client,Commercial = Commercial,Commercial_Length = Commercial_Length)
         self.audio_scan_progress_bar.start()
         self.audio_scan_progress_bar.audio_valueChanged.connect(self.progressBar.setValue)
         self.audio_scan_progress_bar.audio_taskFinished.connect(self.progressBar.setValue)
@@ -135,12 +135,13 @@ class Audio_TaskThread(QThread):
     audio_taskFinished = QtCore.pyqtSignal(int,bool)
     audio_valueChanged = QtCore.pyqtSignal(int) 
 
-    def __init__(self,Stream,Ad,Ad_Duration,database,Date_of_broadcast,Eth_date,Client,Commercial,Commercial_Length):
+    def __init__(self,Stream,Ad,Ad_Duration,database,Station,Date_of_broadcast,Eth_date,Client,Commercial,Commercial_Length):
         super(QThread, self).__init__()
         self.Stream = Stream
         self.Ad = Ad
         self.Ad_Duration = Ad_Duration
         self.database = database
+        self.Station = Station
         self.Date_of_broadcast = Date_of_broadcast
         self.Eth_date = Eth_date
         self.Client = Client
@@ -157,10 +158,12 @@ class Audio_TaskThread(QThread):
         global Broadcast_information
         global match_time
         global Ad_Durations
+        global Station
         Stream = self.Stream
         Ad_Durations = self.Ad_Duration
         Ad = self.Ad
         database = str(self.database)
+        Station = self.Station
         Date_of_broadcast = str(self.Date_of_broadcast)
         Eth_date = str(self.Eth_date)
         Client = self.Client
@@ -239,11 +242,11 @@ class Audio_TaskThread(QThread):
 
 
             '''Writing to Database'''
-            # self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Recording to Database"))
-            # create_fingerprint_database.insert_audio_broadcast_information_to_database(database,str(Date_of_broadcast),str(Eth_date),str(Client[index]),str(Commercial[index]),broadcast_information,str(Ad[index]),str(Ad_Duration),Stream,Stream_duration,str(match_time))
-            # for i in range(progress_bar_index,progress_bar_index + 10 ,2):
-            #     self.audio_valueChanged.emit(i)
-            #     sleep(0.5)
+            self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Recording to Database"))
+            create_fingerprint_database.insert_audio_broadcast_information_to_database(database,Station,str(Date_of_broadcast),str(Eth_date),str(Client[index]),str(Commercial[index]),Broadcast_information[index],str(Ad[index]),str(Ad_Durations[index]),Stream,Stream_duration,str(match_time[index]))
+            for i in range(progress_bar_index,progress_bar_index + 10 ,2):
+                self.audio_valueChanged.emit(i)
+                sleep(0.5)
             progress_bar_index += 10 
             
 

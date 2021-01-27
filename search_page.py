@@ -50,7 +50,7 @@ if not os.path.exists("cropped"):
 
 class Ui_MainWindow(object):
     #def setupUi(self,MainWindow,Commercial,Stream,Ad_seconds,fingerprint):
-    def setupUi(self,MainWindow,database,Stream,Station,Commercial,Ad_seconds,fingerprint,Commercial_Length,start_time):
+    def setupUi(self,MainWindow,database,Stream,Station,Commercial,Ad_seconds,fingerprint,Commercial_Length,scan_type,start_time):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(795, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
 
        
         self.progressBar.setRange(0,100)
-        self.myLongTask = TaskThread(MainWindow = MainWindow,database = database,Stream = Stream,Commercial = Commercial,Ad_seconds = Ad_seconds,fingerprint = fingerprint,Commercial_Length = Commercial_Length, start_time = start_time)
+        self.myLongTask = TaskThread(MainWindow = MainWindow,database = database,Station = Station,Stream = Stream,Commercial = Commercial,Ad_seconds = Ad_seconds,fingerprint = fingerprint,Commercial_Length = Commercial_Length,scan_type = scan_type ,start_time = start_time)
         self.myLongTask.start()
         
 
@@ -112,13 +112,15 @@ class Ui_MainWindow(object):
         # broadcast_information, additional_information = sqd.matching(str(os.path.join(os.getcwd(),'output'))) 
         # print broadcast_information
         # print match_json,Broadcast_information,scene_index
+        # global Date_of_broadcast
         Date = datetime.date.today()
-        Date_of_broadcast = [Date.month,Date.day,Date.year]
+        # Date_of_broadcast = [Date.month,Date.day,Date.year]
         
-        Eth_date = str(conv(Date_of_broadcast[2],Date_of_broadcast[0],Date_of_broadcast[1]))[1:-1]        
-        Eth_date = Eth_date.replace('/',',')
-        Eth_date = [int(i) for i in Eth_date.split(',')]
-        Ethiopian_date = str(Eth_date[1]) + str(',') + str(Eth_date[2]) + str(',') + str(Eth_date[0])
+        # global Eth_date
+        # Eth_date = str(conv(Date_of_broadcast[2],Date_of_broadcast[0],Date_of_broadcast[1]))[1:-1]        
+        # Eth_date = Eth_date.replace('/',',')
+        # Eth_date = [int(i) for i in Eth_date.split(',')]
+        # Ethiopian_date = str(Eth_date[1]) + str(',') + str(Eth_date[2]) + str(',') + str(Eth_date[0])
         
         now = datetime.datetime.now()
         Time = now.strftime("%H:%M:%S")
@@ -146,7 +148,7 @@ class TaskThread(QThread):
     taskFinished = QtCore.pyqtSignal(int,bool)
     valueChanged = QtCore.pyqtSignal(int)
     
-    def __init__(self,MainWindow,database,Stream,Commercial,Ad_seconds,fingerprint,Commercial_Length,start_time):
+    def __init__(self,MainWindow,database,Station,Stream,Commercial,Ad_seconds,fingerprint,Commercial_Length,scan_type,start_time):
         super(QThread, self).__init__()
         self.MainWindow  = MainWindow
         self.database = database
@@ -156,7 +158,8 @@ class TaskThread(QThread):
         self.fingerprint = fingerprint
         self.Commercial_Length = Commercial_Length
         self.start_time = start_time
-
+        self.Station = Station
+        self.scan_type = scan_type
 
     def run(self):
         global Commercial
@@ -172,6 +175,11 @@ class TaskThread(QThread):
         global directory
         global Time_in_video
         global commercial_ad_time_seconds
+        global Station
+        global Date_of_broadcast
+        global Eth_date
+        global scan_type
+
 
         MainWindow = self.MainWindow
         database = self.database
@@ -180,16 +188,33 @@ class TaskThread(QThread):
         Ad_seconds = self.Ad_seconds 
         fingerprint = self.fingerprint
         Commercial_Length = self.Commercial_Length
+        Station = self.Station
         
         start_time = self.start_time
 
         commercial_ad_time_seconds = self.Ad_seconds  
         commercial_fingerprint = self.fingerprint  
+        scan_type = self.scan_type
         sleep(3)
 
         upper_bound = 0.12
         threshold_seconds = 60
+
+        Date = datetime.date.today()
+        Date_of_broadcast = [Date.month,Date.day,Date.year]
+        Eth_date = str(conv(Date_of_broadcast[2],Date_of_broadcast[0],Date_of_broadcast[1]))[1:-1]        
+        Eth_date = Eth_date.replace('/',',')
+        Eth_date = [int(i) for i in Eth_date.split(',')]
+        Ethiopian_date = str(Eth_date[1]) + str(',') + str(Eth_date[2]) + str(',') + str(Eth_date[0])
+        
+        now = datetime.datetime.now()
+        Time = now.strftime("%H:%M:%S")
+
+        Stream_duration = int(get_sec(getLength(Stream)))
         match_json = []
+
+       
+
         
         
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Preparing"))
@@ -204,21 +229,32 @@ class TaskThread(QThread):
                 os.remove(os.getcwd() + "/tmp/" + image_files) 
 
 
-        # for video_file in os.listdir("cropped_threshold"):
-        #     if video_file.lower().endswith((".json",".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
-        #         os.remove(os.getcwd() + "/cropped_threshold/" + video_file)        
+        for video_file in os.listdir("cropped_threshold"):
+            if video_file.lower().endswith((".json",".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
+                os.remove(os.getcwd() + "/cropped_threshold/" + video_file)        
         
-        # for video_file in os.listdir("cropped_content"):
-        #     if video_file.lower().endswith((".json",".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
-        #         os.remove(os.getcwd() + "/cropped_content/" + video_file) 
+        for video_file in os.listdir("cropped_content"):
+            if video_file.lower().endswith((".csv",".json",".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
+                os.remove(os.getcwd() + "/cropped_content/" + video_file) 
 
+
+        print scan_type
 
 
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Detecting Threshold for " + str(Stream) ))
-        # split.video_threshold_scene_detector(Stream,threshold_seconds)
+        split.video_threshold_scene_detector(Stream,threshold_seconds)
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Detecting Content..."))
-        directory = (os.getcwd() + str("/")+str("cropped_content/")).replace("\\","/")
         contentfingerprint = []
+        if (scan_type == "Easy"):
+            directory = (os.getcwd() + str("/")+str("cropped_threshold/")).replace("\\","/")
+            fingerprint_script = "ruby dupe_2.rb"  
+        if (scan_type == "Normal"):
+            directory = (os.getcwd() + str("/")+str("cropped_content/")).replace("\\","/")
+            fingerprint_script = "ruby dupe_3.rb"  
+        
+
+
+        directory = (os.getcwd() + str("/")+str("cropped_content/")).replace("\\","/")
         fingerprint_script = "ruby dupe_3.rb"  
         all_commercials = []
         all_ad_lengths = []
@@ -239,8 +275,9 @@ class TaskThread(QThread):
                 if check_fingerprint_exists.lower().endswith((".json")):
                     break
             else:
-                # split.video_content_scene_detector(str(Ad_seconds[file_index]))
-                # os.system(fingerprint_script)
+                if (scan_type == "Normal"):
+                    split.video_content_scene_detector(str(Ad_seconds[file_index]))
+                os.system(fingerprint_script)
                 self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Fingerprinting..."))
         
                 
@@ -271,6 +308,8 @@ class TaskThread(QThread):
             
             for i in range(len(contentfingerprint)):
                 squared_mean_error = sqed.mean_error_calculator(4,2,100,str(commercial_fingerprint[file_index].replace("\\","/")),str(contentfingerprint[i]))
+                print squared_mean_error
+                print contentfingerprint[i]
                 if (0.01 < squared_mean_error < upper_bound):
                     match_json.append(contentfingerprint[i])
                     scene_index.append(i) 
@@ -278,9 +317,16 @@ class TaskThread(QThread):
                     Time_in_video[file_index] = (str(acsv.normlaized_timestamps(directory)[0][i]))
                     break
             
+            '''Writing to Database'''
+            self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Recording Data to Database"))
+            create_fingerprint_database.insert_video_broadcast_information_to_database(database,Station,str(Date_of_broadcast),str(Eth_date),str(all_clients[file_index]),str(Commercial[file_index]),Broadcast_information[file_index],str(all_ad[file_index]),str(commercial_ad_time_seconds[file_index]),Stream,Stream_duration,str(Time_in_video[file_index]))
+            for i in range(85,89,2):
+                self.valueChanged.emit(i)
+                sleep(0.5)
+            
 
 
-        for i in range(85,99,2):
+        for i in range(90,99,2):
             self.valueChanged.emit(i)
             sleep(3) 
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Done"))

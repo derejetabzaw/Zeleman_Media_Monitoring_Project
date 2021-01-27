@@ -52,7 +52,7 @@ database = str(os.getcwd() + "/" + str("fingerprint_database.db")).replace("\\",
 conv = EthiopianDateConverter.to_ethiopian
       
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow,scan_type):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(740, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -176,7 +176,7 @@ class Ui_MainWindow(object):
             str(self.Commercial_Text_Edit_2.text()),
             str(self.Commercial_Text_Edit_3.text())],
             str(self.upload_stream_Text_Edit.text()),
-            str(self.Tv_Station_Choice.currentText())))
+            str(self.Tv_Station_Choice.currentText()),scan_type))
         
         self.back.clicked.connect(lambda x: self.back_button(MainWindow))
         self.audio_back.clicked.connect(lambda x: self.back_button(MainWindow))
@@ -355,7 +355,7 @@ class Ui_MainWindow(object):
     def browse_ad_additional_button_click(self):
         self.upload_stream_Text_Edit.setText(QtGui.QFileDialog.getOpenFileName(None, "Open Ad Video" ,default_path,"Video (*.mpg *.flv *.wmv *.mpv *.mp4 *.avi)"))
 
-    def search_button(self,MainWindow,database,Commercial,Stream,Station):
+    def search_button(self,MainWindow,database,Commercial,Stream,Station,scan_type):
     	fingerprint_information = []
         Commercials = []
         Commercial_Length = (self.count + 1)
@@ -400,16 +400,15 @@ class Ui_MainWindow(object):
                     commercial_fingerprints.append(fingerprint_information[i][0][3])
                 
                     commercial_ad_time_seconds.append(time_converter.time_converter(commercial_ad_time[i]))
-                """Scanning Should have three options 
+                """Scanning Should have two options 
                 EASY/QUICK 
                 
                 NORMAL(Recommended) 
-                
-                Advanced(DEEP)"""
+                """
                 
                 """Advanced"""
         search_page_ui = search_page.Ui_MainWindow()
-        search_page_ui.setupUi(MainWindow,database,Stream,Station,Commercials,commercial_ad_time_seconds,commercial_fingerprints,Commercial_Length,start_time)
+        search_page_ui.setupUi(MainWindow,database,Stream,Station,Commercials,commercial_ad_time_seconds,commercial_fingerprints,Commercial_Length,scan_type,start_time)
 
         MainWindow.show()
     def back_button(self,MainWindow):
@@ -529,11 +528,12 @@ class Ui_MainWindow(object):
         Eth_date = Eth_date.replace('/',',')
         Eth_date = [int(i) for i in Eth_date.split(',')]
         Eth_date = str(Eth_date[1]) + str(',') + str(Eth_date[2]) + str(',') + str(Eth_date[0])
-        audio_search_page_ui = audio_search_page.Ui_MainWindow()
         for i in range(self.audio_count + 1):
             Client.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][0])
             Ad.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][1])
             Ad_Duration.append(create_fingerprint_database.select_audio_information_from_database_by_commercial(database,str(Commercial[i]))[0][2])
+        
+        audio_search_page_ui = audio_search_page.Ui_MainWindow()
         audio_search_page_ui.setupUi(MainWindow,Date_of_broadcast,Eth_date,str(database),Commercial,Audio_Commercial_Length,str(Station),str(Stream), Client, Ad , Ad_Duration)
         MainWindow.show()
         import sys

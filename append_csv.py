@@ -3,6 +3,7 @@ import sys
 import scene_csv
 import warnings
 import numpy as np
+import time_converter as tc
 warnings.filterwarnings("ignore")
 
 def normlaized_timestamps(directory_path):
@@ -36,6 +37,7 @@ def normlaized_timestamps(directory_path):
 		for y in range(len(csv_contents) - 1):
 			offset_factor.append(float(offset_factor[y]) + float(end_appender[y + 1][-1]))
 			for i in range(len(start_appender[y+1])):
+				# print (start_appender[y+1][i])
 				next_start_appender.append(float(start_appender[y+1][i]) + float(offset_factor[y]))
 				next_end_appender.append(float(end_appender[y+1][i]) + float(offset_factor[y]))
 				

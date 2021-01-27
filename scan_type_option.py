@@ -50,18 +50,15 @@ class Ui_MainWindow(object):
 
 
 
-        self.Easy_Scan.clicked.connect(lambda x: self.Easy_Scan_button_menu(MainWindow))
-        self.Normal_Scan.clicked.connect(lambda x: self.Normal_Scan_button_menu(MainWindow))
+        self.Easy_Scan.clicked.connect(lambda x: self.Normal_Scan_button_menu(MainWindow,"Easy"))
+        self.Normal_Scan.clicked.connect(lambda x: self.Normal_Scan_button_menu(MainWindow,"Normal"))
         # self.Advanced_Scan.clicked.connect(lambda x: self.Advanced_Scan_button_menu(MainWindow))
         MainWindow.setCentralWidget(self.centralwidget)
 
-    def Easy_Scan_button_menu(self,MainWindow):
-        easy_scan_menu_ui = easy_scanner.Ui_MainWindow()
-        easy_scan_menu_ui.setupUi(MainWindow)
-        MainWindow.show()
-    def Normal_Scan_button_menu(self,MainWindow):
+
+    def Normal_Scan_button_menu(self,MainWindow,scan_type):
         normal_scan_menu_ui = scanner.Ui_MainWindow()
-        normal_scan_menu_ui.setupUi(MainWindow)
+        normal_scan_menu_ui.setupUi(MainWindow,scan_type)
         MainWindow.show()
     # def Advanced_Scan_button_menu(self,MainWindow):
     #     advanced_scan_ui = advanced_scanner.Ui_MainWindow()

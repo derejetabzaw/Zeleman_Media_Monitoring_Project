@@ -66,6 +66,7 @@ def create_database_and_tables(database):
 
 
     sql_create_video_broadcast_information_table = """ CREATE TABLE IF NOT EXISTS video_broadcast_information (
+                                            Station text,
                                             Date_of_broadcast text,
                                             Ethiopian_date date,
                                             Client text,
@@ -83,6 +84,7 @@ def create_database_and_tables(database):
 
 
     sql_create_audio_broadcast_information_table = """ CREATE TABLE IF NOT EXISTS audio_broadcast_information (
+                                                Station text,
                                                 Date_of_broadcast date,
                                                 Ethiopian_date date,
                                                 Client text,
@@ -144,8 +146,8 @@ def create_video_broadcast_information(conn, video_information):
     :return: project id
 
     """
-    sql = ''' INSERT INTO video_broadcast_information(Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time)
-              VALUES(?,?,?,?,?,?,?,?,?,?) '''
+    sql = ''' INSERT INTO video_broadcast_information(Station,Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time)
+              VALUES(?,?,?,?,?,?,?,?,?,?,?) '''
     cur = conn.cursor()
     cur.execute(sql, video_information)
     return cur.lastrowid
@@ -157,8 +159,8 @@ def create_audio_broadcast_information(conn, audio_information):
     :param project:
     :return: project id
     """
-    sql = ''' INSERT INTO audio_broadcast_information(Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time)
-              VALUES(?,?,?,?,?,?,?,?,?,?) '''
+    sql = ''' INSERT INTO audio_broadcast_information(Station,Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time)
+              VALUES(?,?,?,?,?,?,?,?,?,?,?) '''
     cur = conn.cursor()
     cur.execute(sql, audio_information)
     return cur.lastrowid
@@ -180,20 +182,20 @@ def insert_audio_information_to_database(database,Client,Commercial,Ad,Ad_Durati
         create_audio_information(conn, information)        
 
 
-def insert_video_broadcast_information_to_database(database,Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time):
+def insert_video_broadcast_information_to_database(database,Station,Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time):
     # create a database connection
     conn = create_connection(database)
     with conn:
         # tasks
-        information = Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time
+        information = Station,Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time
         create_video_broadcast_information(conn, information)
 
-def insert_audio_broadcast_information_to_database(database,Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time):
+def insert_audio_broadcast_information_to_database(database,Station,Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time):
     # create a database connection
     conn = create_connection(database)
     with conn:
         # tasks
-        information = Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time
+        information = Station,Date_of_broadcast,Ethiopian_date,Client,Commercial,Broadcast_information,Ad,Ad_Duration,Stream,Stream_Duartion,match_time
         create_audio_broadcast_information(conn, information)   
 
 
