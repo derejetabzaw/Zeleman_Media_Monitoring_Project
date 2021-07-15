@@ -996,7 +996,7 @@ class Ui_MainWindow(object):
             self.Commercial_Add_Choice_3 = QtGui.QPushButton(self.Video)
             self.Commercial_Add_Choice_3.setGeometry(QtCore.QRect(240,80+self.count*120,75,25))
             self.Commercial_Add_Choice_3.setText("Add")
-            self.Commercial_Add_Choice_3.clicked.connect(lambda x: self.add_new_commercial_3_4(MainWindow))
+            self.Commercial_Add_Choice_3.clicked.connect(lambda x: self.add_new_commercial_3(MainWindow))
    
             self.Agent_Add_Choice_3.show()
             self.Commercial_Add_Choice_3.show()

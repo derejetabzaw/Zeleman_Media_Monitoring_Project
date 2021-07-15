@@ -4,11 +4,11 @@ from PIL import Image
 from math import *
 from collections import namedtuple
 import json
+import numpy as np
 
 from glob import glob
 
 vector = namedtuple("vector", "x y")
-# print (vector)
 vector.length = lambda self: sqrt(self.x**2 + self.y**2)
 # print (vector.length)
 RA = namedtuple("RA","r a")
@@ -21,7 +21,7 @@ def main():
     
     for pattern in sys.argv[1:]:
         pattern = pattern[1:-1]
-        #print (pattern)
+        # print ("pattern", pattern)
         result = []
         files = sorted(glob(pattern))
         for filename in files:

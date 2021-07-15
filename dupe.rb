@@ -9,8 +9,8 @@ include FileUtils
 
 
 
-TEST_FRAMES = 100
-START_TIME = "00:00:20"
+TEST_FRAMES = 400
+START_TIME = "00:00:01"
 SEARCH_DIR = File.expand_path("fingerprints/")
 TMP_DIR = File.expand_path("tmp/")
 TILES_DIR = File.expand_path("tiles/")
@@ -33,7 +33,6 @@ end
 
 Dir.chdir(TMP_DIR) do
   Find.find(SEARCH_DIR) do |filename|
-
     # Skip if not a file or not video
     next if ! File.file?(filename)
     filemime = MimeMagic.by_path(filename)
@@ -56,9 +55,10 @@ Dir.chdir(TMP_DIR) do
     scores = []
     print "|| ImageMagick tiles "
     Find.find(TMP_DIR) do |frame|
-      quietrun(['C:/Program Files/ImageMagick-7.0.9-Q16/convert.exe', '-colorspace', 'gray', '-crop', '80x120', frame, '../tiles/tile%03d.png'])
+      quietrun(['convertmedia', '-colorspace', 'gray', '-crop', '80x120', frame, '../tiles/tile%03d.png'])
 
       out = `python ../centroid/centroid.py '#{TILES_DIR}/tile*.png'`
+      print out
       scores.push(JSON.parse(out.strip))
     end
 

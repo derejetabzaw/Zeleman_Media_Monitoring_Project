@@ -197,7 +197,9 @@ class TaskThread(QThread):
         scan_type = self.scan_type
         sleep(3)
 
-        upper_bound = 0.12
+        # upper_bound = 0.35
+        lower_bound = 0.1317
+        upper_bound = 0.132
         threshold_seconds = 60
 
         Date = datetime.date.today()
@@ -229,28 +231,27 @@ class TaskThread(QThread):
                 os.remove(os.getcwd() + "/tmp/" + image_files) 
 
 
-        for video_file in os.listdir("cropped_threshold"):
-            if video_file.lower().endswith((".json",".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
-                os.remove(os.getcwd() + "/cropped_threshold/" + video_file)        
+        # for video_file in os.listdir("cropped_threshold"):
+        #     if video_file.lower().endswith((".csv",".json",".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
+        #         os.remove(os.getcwd() + "/cropped_threshold/" + video_file)        
         
-        for video_file in os.listdir("cropped_content"):
-            if video_file.lower().endswith((".csv",".json",".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
-                os.remove(os.getcwd() + "/cropped_content/" + video_file) 
+        # for video_file in os.listdir("cropped_content"):
+        #     if video_file.lower().endswith((".csv",".json",".mp4",".flv",".mpg",".avi",".wmv",".mpv")):
+        #         os.remove(os.getcwd() + "/cropped_content/" + video_file) 
 
 
-        print scan_type
 
 
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Detecting Threshold for " + str(Stream) ))
-        split.video_threshold_scene_detector(Stream,threshold_seconds)
+        # split.video_threshold_scene_detector(Stream,threshold_seconds)
         self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Detecting Content..."))
         contentfingerprint = []
-        if (scan_type == "Easy"):
-            directory = (os.getcwd() + str("/")+str("cropped_threshold/")).replace("\\","/")
-            fingerprint_script = "ruby dupe_2.rb"  
-        if (scan_type == "Normal"):
-            directory = (os.getcwd() + str("/")+str("cropped_content/")).replace("\\","/")
-            fingerprint_script = "ruby dupe_3.rb"  
+        # if (scan_type == "Easy"):
+        #     directory = (os.getcwd() + str("/")+str("cropped_threshold/")).replace("\\","/")
+        #     fingerprint_script = "ruby dupe_2.rb"  
+        # if (scan_type == "Normal"):
+        #     directory = (os.getcwd() + str("/")+str("cropped_content/")).replace("\\","/")
+        #     fingerprint_script = "ruby dupe_3.rb"  
         
 
 
@@ -276,9 +277,9 @@ class TaskThread(QThread):
                     break
             else:
                 if (scan_type == "Normal"):
-                    split.video_content_scene_detector(str(Ad_seconds[file_index]))
-                os.system(fingerprint_script)
-                self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Fingerprinting..."))
+                    # split.video_content_scene_detector(str(Ad_seconds[file_index]))
+                    # os.system(fingerprint_script)
+                    self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Fingerprinting..."))
         
                 
             
@@ -306,17 +307,25 @@ class TaskThread(QThread):
             all_ad.append(create_fingerprint_database.select_video_information_from_database_by_commercial(database,Commercial[file_index])[0][1])
             all_ad_lengths.append(tc.time_converter(create_fingerprint_database.select_video_information_from_database_by_commercial(database,Commercial[file_index])[0][2]))
             
+            error_test = []
             for i in range(len(contentfingerprint)):
                 squared_mean_error = sqed.mean_error_calculator(4,2,100,str(commercial_fingerprint[file_index].replace("\\","/")),str(contentfingerprint[i]))
-                print squared_mean_error
-                print contentfingerprint[i]
-                if (0.01 < squared_mean_error < upper_bound):
+                error_test.append(squared_mean_error)
+                print (Commercial[file_index],squared_mean_error , contentfingerprint[i])
+
+                if (lower_bound < squared_mean_error < upper_bound):
+                # if (squared_mean_error == upper_bound):
+                    print ("HIT-----",Commercial[file_index],squared_mean_error , contentfingerprint[i])
+
                     match_json.append(contentfingerprint[i])
                     scene_index.append(i) 
                     Broadcast_information[file_index] = "Yes"           
                     Time_in_video[file_index] = (str(acsv.normlaized_timestamps(directory)[0][i]))
                     break
-            
+            print ("Error Test: ",error_test)
+            print ("Error Max Test: ",max(error_test))
+            print ("Error Min Test: ",min(error_test))
+
             '''Writing to Database'''
             self.emit(QtCore.SIGNAL('labeltext(QString)'), QtCore.QString("Recording Data to Database"))
             create_fingerprint_database.insert_video_broadcast_information_to_database(database,Station,str(Date_of_broadcast),str(Eth_date),str(all_clients[file_index]),str(Commercial[file_index]),Broadcast_information[file_index],str(all_ad[file_index]),str(commercial_ad_time_seconds[file_index]),Stream,Stream_duration,str(Time_in_video[file_index]))

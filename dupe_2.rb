@@ -8,7 +8,7 @@ require 'json'
 include FileUtils
 
 TEST_FRAMES = 100
-START_TIME = "00:00:20"
+START_TIME = "00:00:01"
 SEARCH_DIR = File.expand_path("cropped_threshold/")
 TMP_DIR = File.expand_path("tmp/")
 TILES_DIR = File.expand_path("tiles/")
@@ -55,7 +55,7 @@ Dir.chdir(TMP_DIR) do
     scores = []
     print "|| ImageMagick tiles "
     Find.find(TMP_DIR) do |frame|
-      quietrun(['C:/Program Files/ImageMagick-7.0.9-Q16/convert.exe', '-colorspace', 'gray', '-crop', '80x120', frame, '../tiles/tile%03d.png'])
+      quietrun(['convertmedia', '-colorspace', 'gray', '-crop', '80x120', frame, '../tiles/tile%03d.png'])
 
       out = `python ../centroid/centroid.py '#{TILES_DIR}/tile*.png'`
       print out

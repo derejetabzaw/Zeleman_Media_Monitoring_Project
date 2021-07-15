@@ -44,8 +44,9 @@ def normlaized_timestamps(directory_path):
 		start_timestamp = np.concatenate((np.array(start_appender[0]),np.array(next_start_appender)))
 		end_timestamp = np.concatenate((np.array(end_appender[0]),np.array(next_end_appender)))
 	else:
-		start_timestamp = np.concatenate((np.array(start_appender[0])))
-		end_timestamp = np.concatenate((np.array(end_appender[0])))
+		# print end_appender[0]
 
-
+		start_timestamp = np.array(start_appender[0])
+		end_timestamp = np.array(end_appender[0])
+	
 	return start_timestamp,end_timestamp

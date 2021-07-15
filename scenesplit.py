@@ -4,7 +4,7 @@ import os
 
 def video_threshold_scene_detector(Stream,commercial_ad_time_seconds):
 	directory_threshold = (os.getcwd() + str("/")+str("cropped_threshold")).replace("\\","/")
-	scenedetect_script = "scenedetect -i " + str(Stream) + " -o " + directory_threshold + " detect-threshold -m " + str(commercial_ad_time_seconds) + "s" + " split-video"
+	scenedetect_script = "scenedetect -i " + str(Stream) + " -o " + directory_threshold + " detect-threshold -m " + str(commercial_ad_time_seconds) + "s" + " split-video" + " list-scenes"
 	#print scenedetect_script
 	os.system(scenedetect_script)
 def video_content_scene_detector(ad_length):
